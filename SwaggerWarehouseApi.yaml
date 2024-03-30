@@ -1,0 +1,406 @@
+openapi: 3.0.3
+info:
+  title: Warehouse API
+  description: Warehouse API for MediaSoft test task
+  contact:
+    name: Zhilyaev Maxim
+    email: tssvett@mail.ru
+    url: https://github.com/tssvett
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: WarehouseGoods
+    description: Операции со всеми товарами
+  - name: WarehouseGoodsById
+    description: Операции с товарами по id
+  - name: WarehouseGoodsByArticle
+    description: Операции с товарами по артикулу
+    
+
+
+paths:
+  /warehouse/goods:
+    get:
+      tags:
+        - WarehouseGoods
+      summary: Получение всех товаров хранящихся на складе
+      description: Returns warehouse goods
+      operationId: getGoodsAll
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Warehouse is empty
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Склад Пуст
+    post:
+      tags:
+        - WarehouseGoods
+      summary: Добавление нового товара на склад
+      description: Adds a new warehouse good
+      operationId: addGoods
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseGoodUpdateDto'
+      responses:
+        '200':
+          description: Успешная операция, возвращает созданный объект
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Неудачная операция
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Что-то пошло не так...
+    delete:
+      tags:
+        - WarehouseGoods
+      summary: Удаление всех товаров со склада
+      operationId: deleteGoods
+      responses:
+        '200':
+          description: Успешная операция, склад очищен
+        '400':
+          description: Склад пуст, нечего удалять
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Склад Пуст
+                    
+  /warehouse/goodsById:
+    get:
+      tags:
+        - WarehouseGoodsById
+      summary: Получение товара на складе по id
+      description: Returns a good by id
+      operationId: getGoodById
+      parameters:
+        - name : id
+          in: query
+          description: Article of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким айди не найден
+    put:
+      tags:
+        - WarehouseGoodsById
+      summary: Обновление товара на складе по id
+      description: Returns a  updated good by id
+      operationId: updateGoodById
+      requestBody:
+        description: Формирование нового объекта с новыми данными для обновления
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseGoodUpdateDto'
+      parameters:
+        - name : id
+          in: query
+          description: Id of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким айди не найден                    
+    delete:
+      tags:
+        - WarehouseGoodsById
+      summary: Удаление товара на складе по id
+      operationId: deleteGoodById
+      parameters:
+        - name : id
+          in: query
+          description: Id of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: Успешная операция, товар удален
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким айди не найден
+                    
+  /warehouse/goodsByArticle:
+    get:
+      tags:
+        - WarehouseGoodsByArticle
+      summary: Получение товара на складе по артикулу
+      description: Returns a good by article
+      operationId: getGoodByArticle
+      parameters:
+        - name : article
+          in: query
+          description: Article of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким артикулом не найден
+    put:
+      tags:
+        - WarehouseGoodsByArticle
+      summary: Обновление товара на складе по артикулу
+      description: Returns an updated good by article
+      operationId: updateGoodByArticle
+      requestBody:
+        description: Формирование нового объекта с новыми данными для обновления
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/WarehouseGoodUpdateDto'
+      parameters:
+        - name : article
+          in: query
+          description: Article of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WarehouseGoodFullDto'
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким артикулом не найден                   
+    delete:
+      tags:
+        - WarehouseGoodsByArticle
+      summary: Удаление товара на складе по артикулу
+      operationId: daleteGoodByArticle
+      parameters:
+        - name : article
+          in: query
+          description: Article of product to return
+          required: true
+          schema:
+            type: string
+        
+      responses:
+        '200':
+          description: successful operation
+
+        '400':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: Товар с таким артикулом не найден
+
+components:
+  schemas:
+    WarehouseGoodFullDto:
+      required:
+        - id
+        - name
+        - article
+        - description
+        - category
+        - price
+        - quantity
+        - lastUpdate
+        - creationTime
+      type: object
+      properties:
+        id:
+          type: string
+          example: 301acf9d-705a-4511-9ac9-2b859788ad7f
+        name:
+          type: string
+          example: Strawberry
+          description: Название
+        article:
+          type: string
+          example: 348764
+          description: Артикул
+        description:
+          type: string
+          example: Самая смачная красная клубничка которую вы видели
+          description: Описание 
+        category:
+          type: string
+          example: Berry
+          description: Категория
+        price:
+          type: integer
+          example: 50
+          description: Цена
+        quantity:
+          type: integer
+          format: int32
+          example: 10
+          description: Количество в наличии
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Дата последнего редактирования
+          example : 26.03.2024 13:45:59
+        creationTime:
+          type: string
+          format: date
+          description: Дата создания
+          example: 25.03.2024 12:42:41
+          
+          
+    WarehouseGoodUpdateDto:
+      required:
+        - id
+        - name
+        - article
+        - description
+        - category
+        - price
+        - quantity
+        - lastUpdate
+        - creationTime
+      type: object
+      properties:
+        name:
+          type: string
+          example: Strawberry
+          description: Название
+        article:
+          type: string
+          example: 348764
+          description: Артикул
+        description:
+          type: string
+          example: Самая смачная красная клубничка которую вы видели
+          description: Описание 
+        category:
+          type: string
+          example: Berry
+          description: Категория
+        price:
+          type: number
+          format: double
+          example: 50
+          description: Цена
+        quantity:
+          type: integer
+          format: int32
+          example: 10
+          description: Количество в наличии

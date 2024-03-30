@@ -26,14 +26,13 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     private MappingUtils mappingUtils;
 
     @Override
-    public WarehouseGoodFullDto create(WarehouseGoodFullDto warehouseGoodFullDto) throws SQLUniqueException {
+    public WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGoodUpdateDto) throws SQLUniqueException {
         try {
-            WarehouseGood warehouseGood = mappingUtils.mapFullToWarehouseGood(warehouseGoodFullDto);
+            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodUpdateDto);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.save(warehouseGood));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
-
     }
 
 
@@ -65,32 +64,48 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public WarehouseGoodUpdateDto updateById(WarehouseGoodUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
+    public WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
-        WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodUpdateDto);
-        warehouseGood.setId(id);
+        WarehouseGood warehouseGood1 = warehouseGoodRepository.getReferenceById(id);
         try {
-            warehouseGoodRepository.save(warehouseGood);
-            return mappingUtils.mapToWarehouseGoodUpdateDto(warehouseGood);
+            if (warehouseGoodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle()) && !warehouseGood1.getArticle().equals(warehouseGoodUpdateDto.getArticle())) {
+                throw new SQLUniqueException("Article already exist");
+            }
+            warehouseGood1.setArticle(warehouseGoodUpdateDto.getArticle());
+            warehouseGood1.setName(warehouseGoodUpdateDto.getName());
+            warehouseGood1.setPrice(warehouseGoodUpdateDto.getPrice());
+            warehouseGood1.setQuantity(warehouseGoodUpdateDto.getQuantity());
+            warehouseGood1.setCategory(warehouseGoodUpdateDto.getCategory());
+            warehouseGood1.setDescription(warehouseGoodUpdateDto.getDescription());
+            warehouseGoodRepository.save(warehouseGood1);
+            return mappingUtils.mapToWarehouseGoodFullDto(warehouseGood1);
         }
         catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
 
+
     @Override
-    public WarehouseGoodUpdateDto updateByArticle(WarehouseGoodUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException {
+    public WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException();
         }
-        WarehouseGood warehouseGood1 = warehouseGoodRepository.getReferenceByArticle(article);
-
-        warehouseGood1.setName(warehouseGood.getName());
+        WarehouseGood foundedGood = warehouseGoodRepository.getReferenceByArticle(article);
         try {
-            warehouseGoodRepository.save(warehouseGood1);
-            return mappingUtils.mapToWarehouseGoodUpdateDto(warehouseGood1);
+            if (warehouseGoodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle()) && !warehouseGoodUpdateDto.getArticle().equals(article)) {
+                throw new SQLUniqueException("Article already exist");
+            }
+            foundedGood.setArticle(warehouseGoodUpdateDto.getArticle());
+            foundedGood.setName(warehouseGoodUpdateDto.getName());
+            foundedGood.setPrice(warehouseGoodUpdateDto.getPrice());
+            foundedGood.setQuantity(warehouseGoodUpdateDto.getQuantity());
+            foundedGood.setCategory(warehouseGoodUpdateDto.getCategory());
+            foundedGood.setDescription(warehouseGoodUpdateDto.getDescription());
+            warehouseGoodRepository.save(foundedGood);
+            return mappingUtils.mapToWarehouseGoodFullDto(foundedGood);
         }
         catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());

@@ -16,7 +16,7 @@ public interface WarehouseGoodService {
      * Создает новый товар на складе
      * @param warehouseGood - товар для создания
      */
-    WarehouseGoodFullDto create(WarehouseGoodFullDto warehouseGood) throws SQLUniqueException;
+    WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGood) throws SQLUniqueException;
 
 
     /**
@@ -44,14 +44,14 @@ public interface WarehouseGoodService {
      * @return - список
      */
     List<WarehouseGoodFullDto> readAll() throws EmptyGoodsException;
-    WarehouseGoodUpdateDto updateById(WarehouseGoodUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
+    WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Обновляет товар на складе по заданному имени
      * @param warehouseGood
      * @param article
      */
-    WarehouseGoodUpdateDto updateByArticle(WarehouseGoodUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException;
+    WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException;
 
     /**
      * Удаляет товар на складе по заданному артикулу

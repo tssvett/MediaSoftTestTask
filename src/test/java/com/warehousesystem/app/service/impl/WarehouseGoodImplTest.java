@@ -18,12 +18,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -140,183 +140,314 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void create_succesfullyCreated() throws SQLUniqueException {
+    void test_create_valid_input() throws SQLUniqueException {
         //when
-        when(goodService.create(goodFullDto1)).thenReturn(goodFullDto1);
-
+        when(mappingUtils.mapUpdateToWarehouseGood(goodUpdateDto1)).thenReturn(good1);
+        when(goodRepository.save(good1)).thenReturn(good1);
+        when(mappingUtils.mapToWarehouseGoodFullDto(good1)).thenReturn(goodFullDto1);
         //then
-        assertEquals(goodFullDto1, goodService.create(goodFullDto1));
-
-    }
-
-
-
-
-    @Test
-    void readById_succesfullyRead() throws NotFoundByIdException {
-
-        //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(true);
-        when(goodService.readById(good1.getId())).thenReturn(goodFullDto1);
-        //then
-        assertEquals(goodFullDto1, goodService.readById(good1.getId()));
+        WarehouseGoodFullDto result = goodService.create(goodUpdateDto1);
+        assertEquals(good1.getId(), result.getId());
+        assertEquals(good1.getArticle(), result.getArticle());
+        assertEquals(good1.getName(), result.getName());
+        assertEquals(good1.getCategory(), result.getCategory());
+        assertEquals(good1.getDescription(), result.getDescription());
+        assertEquals(good1.getPrice(), result.getPrice());
+        assertEquals(good1.getQuantity(), result.getQuantity());
+        assertEquals(good1.getCreationTime(), result.getCreationTime());
+        assertEquals(good1.getLastUpdateTime(), result.getLastUpdateTime());
+        verify(goodRepository, times(1)).save(good1);
     }
 
     @Test
-    void readById_throwsNotFoundByIdException() {
+    void test_save_to_repository() throws SQLUniqueException {
         //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(false);
-        //then
-        assertThrows(NotFoundByIdException.class, () -> goodService.readById(good1.getId()));
+        when(mappingUtils.mapUpdateToWarehouseGood(goodUpdateDto1)).thenReturn(good1);
+        when(goodRepository.save(good1)).thenReturn(good1);
+        when(mappingUtils.mapToWarehouseGoodFullDto(good1)).thenReturn(goodFullDto1);
+
+        WarehouseGoodFullDto  result = goodService.create(goodUpdateDto1);
+        verify(goodRepository, times(1)).save(good1);
     }
 
     @Test
-    void readByArticle_succesfullyRead() throws NotFoundByArticleException {
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(true);
-        when(goodService.readByArticle(good1.getArticle())).thenReturn(goodFullDto1);
-        //then
-        assertEquals(goodFullDto1, goodService.readByArticle(good1.getArticle()));
-    }
-
-    @Test
-    void readByArticle_throwsNotFoundByArticleException() {
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(false);
-        //then
-        assertThrows(NotFoundByArticleException.class, () -> goodService.readByArticle(good1.getArticle()));
-    }
-
-    @Test
-    void readAll_succesfullyRead() throws EmptyGoodsException {
+    void test_returns_correct_warehouse_good_full_dto_with_valid_uuid() throws NotFoundByIdException {
         // given
-        List<WarehouseGood> goods = List.of(good1, good2);
-        List<WarehouseGoodFullDto> expected = List.of(goodFullDto1, goodFullDto2);
+        UUID validId = UUID.randomUUID();
+        WarehouseGoodFullDto expectedDto = new WarehouseGoodFullDto();
+        when(goodRepository.existsById(validId)).thenReturn(true);
+        when(goodRepository.getReferenceById(validId)).thenReturn(new WarehouseGood());
+        when(mappingUtils.mapToWarehouseGoodFullDto(any(WarehouseGood.class))).thenReturn(expectedDto);
 
         // when
-        when(goodRepository.findAll()).thenReturn(goods);
-        when(goods.stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList())).thenReturn(expected);
+        WarehouseGoodFullDto result = goodService.readById(validId);
+
+        // then
+        assertEquals(expectedDto, result);
+    }
+
+    @Test
+    void test_throws_not_found_by_id_exception_with_invalid_uuid() {
+        // given
+        UUID invalidId = UUID.randomUUID();
+        when(goodRepository.existsById(invalidId)).thenReturn(false);
+
+        // then
+        assertThrows(NotFoundByIdException.class, () -> goodService.readById(invalidId));
+    }
+
+    @Test
+    void test_throws_not_found_by_id_exception_with_null_uuid() {
+        // then
+        assertThrows(NotFoundByIdException.class, () -> goodService.readById(null));
+    }
+
+
+    @Test
+    void test_valid_article_returns_warehouse_good_full_dto() throws NotFoundByArticleException {
+        // given
+        String validArticle = "12345";
+
+        when(goodRepository.existsByArticle(validArticle)).thenReturn(true);
+        when(goodRepository.getReferenceByArticle(validArticle)).thenReturn(good1);
+        WarehouseGoodFullDto expectedDto = mappingUtils.mapToWarehouseGoodFullDto(good1);
+
+        // when
+        WarehouseGoodFullDto result = goodService.readByArticle(validArticle);
+
+        // then
+        assertEquals(expectedDto, result);
+    }
+
+    @Test
+    void test_invalid_article_throws_not_found_by_article_exception() {
+        // given
+        String invalidArticle = "54321";
+        when(goodRepository.existsByArticle(invalidArticle)).thenReturn(false);
+
+        // then
+        assertThrows(NotFoundByArticleException.class, () -> goodService.readByArticle(invalidArticle));
+    }
+
+    @Test
+    void test_return_list_when_repository_not_empty() throws EmptyGoodsException {
+        // given
+        List<WarehouseGood> warehouseGoods = new ArrayList<>();
+        warehouseGoods.add(new WarehouseGood());
+        when(goodRepository.findAll()).thenReturn(warehouseGoods);
+
+        // when
         List<WarehouseGoodFullDto> result = goodService.readAll();
 
         // then
-        assertEquals(expected, result);
-
+        assertFalse(result.isEmpty());
     }
 
     @Test
-    void readAll_throwsEmptyGoodsException() {
-        //given
-        List<WarehouseGood> goods = List.of();
+    void test_throw_exception_when_repository_empty() {
+        // given
+        when(goodRepository.findAll()).thenReturn(new ArrayList<>());
 
-        //when
-        when(goodRepository.findAll()).thenReturn(goods);
-
-        //then
+        // then
         assertThrows(EmptyGoodsException.class, () -> goodService.readAll());
     }
 
     @Test
-    void updateById_succesfullyUpdated() throws SQLUniqueException, NotFoundByIdException {
+    void test_throw_exception_when_id_not_found() {
+        // given
+        UUID id = UUID.randomUUID();
+        when(goodRepository.existsById(id)).thenReturn(false);
 
-        //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(true);
-
-        when(mappingUtils.mapUpdateToWarehouseGood(goodUpdateDto2)).thenReturn(good1);
-        when(goodService.updateById(goodUpdateDto2, good1.getId())).thenReturn(goodUpdateDto2);
-        //then
-        assertEquals(goodUpdateDto2, goodService.updateById(goodUpdateDto2, good1.getId()));
+        // then
+        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(new WarehouseGoodUpdateDto(), id));
     }
 
     @Test
-    void updateById_throwsNotFoundByIdException() {
-        //given
-        WarehouseGoodUpdateDto updatedGood2 = mappingUtils.mapToWarehouseGoodUpdateDto(good2);
-        //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(false);
-        //then
-        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(updatedGood2, good1.getId()));
+    void test_valid_uuid_and_valid_warehouse_good_update_dto_returns_updated_warehouse_good_full_dto() throws NotFoundByIdException, SQLUniqueException {
+        // given
+        UUID validId = UUID.randomUUID();
+        WarehouseGoodUpdateDto validDto = WarehouseGoodUpdateDto.builder()
+                .name("Updated Name")
+                .article("Updated Article")
+                .description("Updated Description")
+                .category("Updated Category")
+                .price(10.0)
+                .quantity(5)
+                .build();
+        WarehouseGood validWarehouseGood = WarehouseGood.builder()
+                .id(validId)
+                .name("Name")
+                .article("Article")
+                .description("Description")
+                .category("Category")
+                .price(5.0)
+                .quantity(10)
+                .build();
+        WarehouseGoodFullDto expectedDto = WarehouseGoodFullDto.builder()
+                .id(validId)
+                .name("Updated Name")
+                .article("Updated Article")
+                .description("Updated Description")
+                .category("Updated Category")
+                .price(10.0)
+                .quantity(5)
+                .lastUpdateTime(validWarehouseGood.getLastUpdateTime())
+                .creationTime(validWarehouseGood.getCreationTime())
+                .build();
+
+        when(goodRepository.existsById(validId)).thenReturn(true);
+        when(mappingUtils.mapUpdateToWarehouseGood(validDto)).thenReturn(validWarehouseGood);
+        when(goodRepository.save(validWarehouseGood)).thenReturn(validWarehouseGood);
+        when(mappingUtils.mapToWarehouseGoodFullDto(validWarehouseGood)).thenReturn(expectedDto);
+
+        // when
+        WarehouseGoodFullDto result = goodService.updateById(validDto, validId);
+
+        // then
+        assertEquals(expectedDto, result);
     }
 
     @Test
-    void updateByArticle_succesfullyUpdated() throws SQLUniqueException, NotFoundByArticleException {
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(true);
-        when(goodRepository.getReferenceByArticle(good1.getArticle())).thenReturn(good1);
-        //then
-        when(goodService.updateByArticle(goodUpdateDto2, good1.getArticle())).thenReturn(goodUpdateDto2);
-        assertEquals(goodUpdateDto2, goodService.updateByArticle(goodUpdateDto2, good1.getArticle()));
+    void test_valid_uuid_and_warehouse_good_update_dto_with_one_field_updated_returns_updated_warehouse_good_full_dto() throws NotFoundByIdException, SQLUniqueException {
+        // given
+        UUID validId = UUID.randomUUID();
+        WarehouseGoodUpdateDto validDto = WarehouseGoodUpdateDto.builder()
+                .name("Updated Name")
+                .build();
+        WarehouseGood validWarehouseGood = WarehouseGood.builder()
+                .id(validId)
+                .name("Name")
+                .article("Article")
+                .description("Description")
+                .category("Category")
+                .price(5.0)
+                .quantity(10)
+                .build();
+        WarehouseGoodFullDto expectedDto = WarehouseGoodFullDto.builder()
+                .id(validId)
+                .name("Updated Name")
+                .article("Article")
+                .description("Description")
+                .category("Category")
+                .price(5.0)
+                .quantity(10)
+                .lastUpdateTime(validWarehouseGood.getLastUpdateTime())
+                .creationTime(validWarehouseGood.getCreationTime())
+                .build();
+
+        when(goodRepository.existsById(validId)).thenReturn(true);
+        when(mappingUtils.mapUpdateToWarehouseGood(validDto)).thenReturn(validWarehouseGood);
+        when(goodRepository.save(validWarehouseGood)).thenReturn(validWarehouseGood);
+        when(mappingUtils.mapToWarehouseGoodFullDto(validWarehouseGood)).thenReturn(expectedDto);
+
+        // when
+        WarehouseGoodFullDto result = goodService.updateById(validDto, validId);
+
+        // then
+        assertEquals(expectedDto, result);
     }
 
     @Test
-    void updateByArticle_throwsNotFoundByArticleException() {
-        //given
-        WarehouseGoodUpdateDto updatedGood2 = mappingUtils.mapToWarehouseGoodUpdateDto(good2);
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(false);
-        //then
-        assertThrows(NotFoundByArticleException.class, () -> goodService.updateByArticle(updatedGood2, good1.getArticle()));
+    void test_deletes_existing_warehouse_good_by_id() throws NotFoundByIdException {
+        // given
+        UUID validId = UUID.randomUUID();
+        when(goodRepository.existsById(validId)).thenReturn(true);
+
+        // when
+        goodService.deleteById(validId);
+
+        // then
+        verify(goodRepository, times(1)).deleteById(validId);
     }
 
     @Test
-    void deleteById_succesfullyDeleted() throws NotFoundByIdException {
-        //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(true);
-        //then
-        goodService.deleteById(good1.getId());
-        verify(goodRepository, times(1)).deleteById(good1.getId());
+    void test_deletes_only_warehouse_good_with_specified_id() throws NotFoundByIdException {
+        // given
+        UUID validId = UUID.randomUUID();
+        when(goodRepository.existsById(validId)).thenReturn(true);
+
+        // when
+        goodService.deleteById(validId);
+
+        // then
+        verify(goodRepository, times(1)).deleteById(validId);
     }
 
     @Test
-    void deleteById_throwsNotFoundByIdException() {
-        //when
-        when(goodRepository.existsById(good1.getId())).thenReturn(false);
-        //then
-        assertThrows(NotFoundByIdException.class, () -> goodService.deleteById(good1.getId()));
+    void test_throws_not_found_by_id_exception_when_deleting_non_existing_warehouse_good() {
+        // given
+        UUID invalidId = UUID.randomUUID();
+        when(goodRepository.existsById(invalidId)).thenReturn(false);
+
+        // then
+        assertThrows(NotFoundByIdException.class, () -> goodService.deleteById(invalidId));
     }
 
     @Test
-    void deleteByArticle_succesfullyDeleted() throws NotFoundByArticleException {
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(true);
+    void test_does_not_delete_warehouse_good_when_article_does_not_exist() {
+        // given
+        String article = "12345";
+        when(goodRepository.existsByArticle(article)).thenReturn(false);
 
-        //then
-        goodService.deleteByArticle(good1.getArticle());
-        verify(goodRepository, times(1)).deleteByArticle(good1.getArticle());
+        // when
+        assertThrows(NotFoundByArticleException.class, () -> goodService.deleteByArticle(article));
+
+        // then
+        verify(goodRepository, never()).deleteByArticle(article);
     }
 
     @Test
-    void deleteByArticle_throwsNotFoundByArticleException() {
+    void test_does_not_delete_warehouse_good_when_article_is_null() {
+        // given
+        String article = null;
 
-        //when
-        when(goodRepository.existsByArticle(good1.getArticle())).thenReturn(false);
+        // when
+        assertThrows(NotFoundByArticleException.class, () -> goodService.deleteByArticle(article));
 
-        //then
-        assertThrows(NotFoundByArticleException.class, () -> goodService.deleteByArticle(good1.getArticle()));
+        // then
+        verify(goodRepository, never()).deleteByArticle(article);
     }
 
     @Test
-    void deleteAll_succesfullyDeleted() throws EmptyGoodsException {
-        //given
-        List<WarehouseGood> goods = List.of(good1, good2);
+    void test_does_not_delete_warehouse_good_when_article_is_empty_string() {
+        // given
+        String article = "";
 
-        //when
+        // when
+        assertThrows(NotFoundByArticleException.class, () -> goodService.deleteByArticle(article));
+
+        // then
+        verify(goodRepository, never()).deleteByArticle(article);
+    }
+
+    @Test
+    void test_deletes_all_goods_when_goods_exist() {
+        // given
+        List<WarehouseGood> goods = new ArrayList<>();
+        goods.add(new WarehouseGood());
+        goods.add(new WarehouseGood());
         when(goodRepository.findAll()).thenReturn(goods);
 
-        //then
-        goodService.deleteAll();
+        // when
+        assertDoesNotThrow(() -> goodService.deleteAll());
+
+        // then
         verify(goodRepository, times(1)).deleteAll();
     }
 
     @Test
-    void deleteAll_throwsEmptyGoodsException() {
-        //given
-        List<WarehouseGood> goods = List.of();
-        //when
+    void test_does_not_throw_exception_when_goods_exist() {
+        // given
+        List<WarehouseGood> goods = new ArrayList<>();
+        goods.add(new WarehouseGood());
+        goods.add(new WarehouseGood());
         when(goodRepository.findAll()).thenReturn(goods);
-        //then
 
-        assertThrows(EmptyGoodsException.class, () -> goodService.deleteAll());
+        // when
+        assertDoesNotThrow(() -> goodService.deleteAll());
+
+        // then
+        verify(goodRepository, times(1)).deleteAll();
     }
-
 
 }

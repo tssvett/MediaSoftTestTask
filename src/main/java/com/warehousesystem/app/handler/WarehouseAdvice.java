@@ -43,6 +43,7 @@ public class WarehouseAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Response> handleException(MethodArgumentTypeMismatchException e) {
         Response response = new Response(e.getMessage());
