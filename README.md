@@ -1,14 +1,31 @@
-# Mediasoft Test Project
+# Тестовое задание Mediasoft
 
-This project is a test assignment from Mediasoft and represents a CRUD service using Spring, Hibernate, and Postgresql technologies.
+Этот проект является тестовым заданием от Mediasoft и представляет собой CRUD-сервис для учета товаров на складе.
 
-## Technologies Used
+## Используемые технологии
 - Spring
 - Hibernate
 - Postgresql
 
-## Installation
-1. Clone the repository
-2. Set up your Postgresql database
-3. Update application.properties file with your database credentials
-4. Run the application
+# Инструкция по запуску Maven проекта
+
+1. Откройте командную строку.
+
+2. Перейдите в корневую директорию вашего Maven проекта, используя команду `cd <путь до директории>`.
+
+3. Перед сборкой проекта выполните команду `mvn clean package`, чтобы удалить предыдущие собранные файлы и создать jar файл проекта в директории `target`.
+
+4. Создайте базу данных для работы проекта.
+
+5. Отредактируйте файл `application.properties`, который находится в папке `src/main/resources`, добавив информацию для подключения к вашей базе данных.
+
+Пример:
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/mydbname
+spring.datasource.username=mydbusername
+spring.datasource.password=mydbpassword
+```
+
+6. Теперь можно запустить проект, используя команду `java -jar target/MediaSoftTestTask-0.0.1-SNAPSHOT.jar`.
+
+В итоге должен собраться и запустится Maven проект для учета товаров на складе.
