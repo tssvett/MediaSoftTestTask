@@ -263,88 +263,67 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_valid_uuid_and_valid_warehouse_good_update_dto_returns_updated_warehouse_good_full_dto() throws NotFoundByIdException, SQLUniqueException {
+    void test_update_valid_input() throws NotFoundByIdException, SQLUniqueException {
         // given
-        UUID validId = UUID.randomUUID();
-        WarehouseGoodUpdateDto validDto = WarehouseGoodUpdateDto.builder()
-                .name("Updated Name")
-                .article("Updated Article")
-                .description("Updated Description")
-                .category("Updated Category")
+        UUID id = UUID.randomUUID();
+        WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
+                .name("Test Good")
+                .article("12345")
+                .description("Test Description")
+                .category("Test Category")
                 .price(10.0)
                 .quantity(5)
-                .build();
-        WarehouseGood validWarehouseGood = WarehouseGood.builder()
-                .id(validId)
-                .name("Name")
-                .article("Article")
-                .description("Description")
-                .category("Category")
-                .price(5.0)
-                .quantity(10)
                 .build();
         WarehouseGoodFullDto expectedDto = WarehouseGoodFullDto.builder()
-                .id(validId)
-                .name("Updated Name")
-                .article("Updated Article")
-                .description("Updated Description")
-                .category("Updated Category")
+                .id(id)
+                .name("Test Good")
+                .article("12345")
+                .description("Test Description")
+                .category("Test Category")
                 .price(10.0)
                 .quantity(5)
-                .lastUpdateTime(validWarehouseGood.getLastUpdateTime())
-                .creationTime(validWarehouseGood.getCreationTime())
                 .build();
 
-        when(goodRepository.existsById(validId)).thenReturn(true);
-        when(mappingUtils.mapUpdateToWarehouseGood(validDto)).thenReturn(validWarehouseGood);
-        when(goodRepository.save(validWarehouseGood)).thenReturn(validWarehouseGood);
-        when(mappingUtils.mapToWarehouseGoodFullDto(validWarehouseGood)).thenReturn(expectedDto);
+        when(goodRepository.existsById(id)).thenReturn(true);
+        when(goodRepository.getReferenceById(id)).thenReturn(WarehouseGood.builder().build());
+        when(mappingUtils.mapToWarehouseGoodFullDto(any(WarehouseGood.class))).thenReturn(expectedDto);
 
         // when
-        WarehouseGoodFullDto result = goodService.updateById(validDto, validId);
+        WarehouseGoodFullDto result = goodService.updateById(warehouseGoodUpdateDto, id);
 
         // then
         assertEquals(expectedDto, result);
     }
 
     @Test
-    void test_valid_uuid_and_warehouse_good_update_dto_with_one_field_updated_returns_updated_warehouse_good_full_dto() throws NotFoundByIdException, SQLUniqueException {
+    public void test_update_sql_unique_exception() {
         // given
-        UUID validId = UUID.randomUUID();
-        WarehouseGoodUpdateDto validDto = WarehouseGoodUpdateDto.builder()
-                .name("Updated Name")
-                .build();
-        WarehouseGood validWarehouseGood = WarehouseGood.builder()
-                .id(validId)
-                .name("Name")
-                .article("Article")
-                .description("Description")
-                .category("Category")
-                .price(5.0)
-                .quantity(10)
-                .build();
-        WarehouseGoodFullDto expectedDto = WarehouseGoodFullDto.builder()
-                .id(validId)
-                .name("Updated Name")
-                .article("Article")
-                .description("Description")
-                .category("Category")
-                .price(5.0)
-                .quantity(10)
-                .lastUpdateTime(validWarehouseGood.getLastUpdateTime())
-                .creationTime(validWarehouseGood.getCreationTime())
+        UUID id = UUID.randomUUID();
+        WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
+                .name("Test Good")
+                .article("12345")
+                .description("Test Description")
+                .category("Test Category")
+                .price(10.0)
+                .quantity(5)
                 .build();
 
-        when(goodRepository.existsById(validId)).thenReturn(true);
-        when(mappingUtils.mapUpdateToWarehouseGood(validDto)).thenReturn(validWarehouseGood);
-        when(goodRepository.save(validWarehouseGood)).thenReturn(validWarehouseGood);
-        when(mappingUtils.mapToWarehouseGoodFullDto(validWarehouseGood)).thenReturn(expectedDto);
-
-        // when
-        WarehouseGoodFullDto result = goodService.updateById(validDto, validId);
+        when(goodRepository.existsById(id)).thenReturn(true);
+        when(goodRepository.getReferenceById(id)).thenReturn(WarehouseGood.builder().article("54321").build());
+        when(goodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle())).thenReturn(true);
 
         // then
-        assertEquals(expectedDto, result);
+        assertThrows(SQLUniqueException.class, () -> goodService.updateById(warehouseGoodUpdateDto, id));
+    }
+
+    @Test
+    public void test_throw_not_found_by_id_exception() {
+        // Arrange
+        UUID id = UUID.randomUUID();
+        when(goodRepository.existsById(id)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(any(WarehouseGoodUpdateDto.class), id));
     }
 
     @Test
