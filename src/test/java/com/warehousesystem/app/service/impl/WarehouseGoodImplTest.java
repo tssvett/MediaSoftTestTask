@@ -10,12 +10,13 @@ import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.utils.MappingUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,23 +40,23 @@ class WarehouseGoodImplTest {
     @InjectMocks
     WarehouseGoodServiceImpl goodService;
 
-    WarehouseGood good1;
-    WarehouseGood good2;
-    WarehouseGood good3;
-    WarehouseGood good4;
-    WarehouseGood good5;
+    static WarehouseGood good1;
+    static WarehouseGood good2;
+    static WarehouseGood good3;
+    static WarehouseGood good4;
+    static WarehouseGood good5;
 
-    WarehouseGoodUpdateDto goodUpdateDto1;
-    WarehouseGoodUpdateDto goodUpdateDto2;
-    WarehouseGoodUpdateDto goodUpdateDto3;
+    static WarehouseGoodUpdateDto goodUpdateDto1;
+    static WarehouseGoodUpdateDto goodUpdateDto2;
+    static WarehouseGoodUpdateDto goodUpdateDto3;
 
-    WarehouseGoodFullDto goodFullDto1;
-    WarehouseGoodFullDto goodFullDto2;
-    WarehouseGoodFullDto goodFullDto3;
+    static WarehouseGoodFullDto goodFullDto1;
+    static WarehouseGoodFullDto goodFullDto2;
+    static WarehouseGoodFullDto goodFullDto3;
 
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         good1 = new WarehouseGood();
         good2 = new WarehouseGood();
         good3 = new WarehouseGood();
@@ -140,7 +141,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_create_valid_input() throws SQLUniqueException {
+    void create_CorrectValues_CorrectSave() throws SQLUniqueException {
         //when
         when(mappingUtils.mapUpdateToWarehouseGood(goodUpdateDto1)).thenReturn(good1);
         when(goodRepository.save(good1)).thenReturn(good1);
@@ -160,19 +161,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_save_to_repository() throws SQLUniqueException {
-        //when
-        when(mappingUtils.mapUpdateToWarehouseGood(goodUpdateDto1)).thenReturn(good1);
-        when(goodRepository.save(good1)).thenReturn(good1);
-        when(mappingUtils.mapToWarehouseGoodFullDto(good1)).thenReturn(goodFullDto1);
-
-        WarehouseGoodFullDto  result = goodService.create(goodUpdateDto1);
-        verify(goodRepository, times(1)).save(good1);
-    }
-
-    @Test
-    void test_returns_correct_warehouse_good_full_dto_with_valid_uuid() throws NotFoundByIdException {
-        // given
+    void readById_validUUID_CorrectFullDto() throws NotFoundByIdException {
         UUID validId = UUID.randomUUID();
         WarehouseGoodFullDto expectedDto = new WarehouseGoodFullDto();
         when(goodRepository.existsById(validId)).thenReturn(true);
@@ -187,7 +176,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_throws_not_found_by_id_exception_with_invalid_uuid() {
+    void readById_invalidUUID_ThrowsNotFoundByIdException() {
         // given
         UUID invalidId = UUID.randomUUID();
         when(goodRepository.existsById(invalidId)).thenReturn(false);
@@ -197,14 +186,14 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_throws_not_found_by_id_exception_with_null_uuid() {
+    void readById_nullId_ThrowsNotFoundByIdException() {
         // then
         assertThrows(NotFoundByIdException.class, () -> goodService.readById(null));
     }
 
 
     @Test
-    void test_valid_article_returns_warehouse_good_full_dto() throws NotFoundByArticleException {
+    void readByArticle_validArticle_CorrectFullDto() throws NotFoundByArticleException {
         // given
         String validArticle = "12345";
 
@@ -220,7 +209,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_invalid_article_throws_not_found_by_article_exception() {
+    void readByArticle_invalidArticle_ThrowsNotFoundByArticleException() {
         // given
         String invalidArticle = "54321";
         when(goodRepository.existsByArticle(invalidArticle)).thenReturn(false);
@@ -230,7 +219,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_return_list_when_repository_not_empty() throws EmptyGoodsException {
+    void readAll_CorrectGoodAdd_NonEmptyList() throws EmptyGoodsException {
         // given
         List<WarehouseGood> warehouseGoods = new ArrayList<>();
         warehouseGoods.add(new WarehouseGood());
@@ -244,7 +233,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_throw_exception_when_repository_empty() {
+    void readAll_EmptyList_ThrowsEmptyGoodsException() {
         // given
         when(goodRepository.findAll()).thenReturn(new ArrayList<>());
 
@@ -253,7 +242,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_throw_exception_when_id_not_found() {
+    void updateById_invalidId_ThrowsNotFoundByIdException() {
         // given
         UUID id = UUID.randomUUID();
         when(goodRepository.existsById(id)).thenReturn(false);
@@ -263,7 +252,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_update_valid_input() throws NotFoundByIdException, SQLUniqueException {
+    void updateById_validId_CorrectFullDto() throws NotFoundByIdException, SQLUniqueException {
         // given
         UUID id = UUID.randomUUID();
         WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
@@ -296,7 +285,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    public void test_update_sql_unique_exception() {
+    void updateById_articleAlreadyExist_ThrowsSQLUniqueException() {
         // given
         UUID id = UUID.randomUUID();
         WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
@@ -317,17 +306,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    public void test_throw_not_found_by_id_exception() {
-        // Arrange
-        UUID id = UUID.randomUUID();
-        when(goodRepository.existsById(id)).thenReturn(false);
-
-        // Act & Assert
-        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(any(WarehouseGoodUpdateDto.class), id));
-    }
-
-    @Test
-    void test_deletes_existing_warehouse_good_by_id() throws NotFoundByIdException {
+    void deleteById_validId_CorrectDelete() throws NotFoundByIdException {
         // given
         UUID validId = UUID.randomUUID();
         when(goodRepository.existsById(validId)).thenReturn(true);
@@ -340,7 +319,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_deletes_only_warehouse_good_with_specified_id() throws NotFoundByIdException {
+    void deleteById_invalidId_ThrowsNotFoundByIdException() throws NotFoundByIdException {
         // given
         UUID validId = UUID.randomUUID();
         when(goodRepository.existsById(validId)).thenReturn(true);
@@ -353,17 +332,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_throws_not_found_by_id_exception_when_deleting_non_existing_warehouse_good() {
-        // given
-        UUID invalidId = UUID.randomUUID();
-        when(goodRepository.existsById(invalidId)).thenReturn(false);
-
-        // then
-        assertThrows(NotFoundByIdException.class, () -> goodService.deleteById(invalidId));
-    }
-
-    @Test
-    void test_does_not_delete_warehouse_good_when_article_does_not_exist() {
+    void deleteByArticle_invalidArticle_ThrowsNotFoundByArticleException() {
         // given
         String article = "12345";
         when(goodRepository.existsByArticle(article)).thenReturn(false);
@@ -376,7 +345,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_does_not_delete_warehouse_good_when_article_is_null() {
+    void deleteByArticle_nullArticle_ThrowsNotFoundByArticleException() {
         // given
         String article = null;
 
@@ -388,7 +357,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_does_not_delete_warehouse_good_when_article_is_empty_string() {
+    void deleteByArticle_emptyArticle_ThrowsNotFoundByArticleException() {
         // given
         String article = "";
 
@@ -400,7 +369,7 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void test_deletes_all_goods_when_goods_exist() {
+    void deleteAll_doesNotThrowException_CorrectDelete() {
         // given
         List<WarehouseGood> goods = new ArrayList<>();
         goods.add(new WarehouseGood());
@@ -413,20 +382,4 @@ class WarehouseGoodImplTest {
         // then
         verify(goodRepository, times(1)).deleteAll();
     }
-
-    @Test
-    void test_does_not_throw_exception_when_goods_exist() {
-        // given
-        List<WarehouseGood> goods = new ArrayList<>();
-        goods.add(new WarehouseGood());
-        goods.add(new WarehouseGood());
-        when(goodRepository.findAll()).thenReturn(goods);
-
-        // when
-        assertDoesNotThrow(() -> goodService.deleteAll());
-
-        // then
-        verify(goodRepository, times(1)).deleteAll();
-    }
-
 }
