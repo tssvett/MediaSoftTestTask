@@ -13,7 +13,7 @@
 
 2. Перейдите в желаемую директорию используя команду `cd <путь до директории>`, внутри которой будет создана корневая директория `MediaSoftTestTask` проекта.
 
-3. Склонируйте этот репозиторий используя команду `git clone https://github.com/tssvett/MediaSoftTestTask.git`
+3. Склонируйте этот репозиторий используя команду `git clone -b develop https://github.com/tssvett/MediaSoftTestTask.git`
 
 4. Перейдите в коревую директорию используя команду `cd MediaSoftTestTask`
 
