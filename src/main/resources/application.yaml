@@ -12,3 +12,10 @@ spring:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+
+app:
+  scheduling:
+    enabled: true
+    period: 10000
+    priceIncreasePercentage: 10
+    optimization: false
