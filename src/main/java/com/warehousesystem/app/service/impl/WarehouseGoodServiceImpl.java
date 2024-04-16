@@ -1,6 +1,7 @@
 package com.warehousesystem.app.service.impl;
 
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
+import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
@@ -11,7 +12,11 @@ import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import com.warehousesystem.app.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,11 +60,22 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public List<WarehouseGoodFullDto> readAll() throws EmptyGoodsException {
-        List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll().stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList());
+    public List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
+        int size = warehouseGoodSearchDto.getSize();
+        int pageNumber = warehouseGoodSearchDto.getPageNumber();
+
+        // Вычисляем смещение для пагинации
+        int offset = pageNumber * size;
+        PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
+        List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
+                .stream()
+                .map(mappingUtils::mapToWarehouseGoodFullDto)
+                .collect(Collectors.toList());
+
         if (goods.isEmpty()) {
             throw new EmptyGoodsException();
         }
+
         return goods;
     }
 
