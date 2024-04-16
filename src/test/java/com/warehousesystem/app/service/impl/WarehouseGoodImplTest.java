@@ -2,6 +2,7 @@ package com.warehousesystem.app.service.impl;
 
 
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
+import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
@@ -16,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -222,11 +222,14 @@ class WarehouseGoodImplTest {
     void readAll_CorrectGoodAdd_NonEmptyList() throws EmptyGoodsException {
         // given
         List<WarehouseGood> warehouseGoods = new ArrayList<>();
+        WarehouseGoodSearchDto warehouseGoodSearchDto = new WarehouseGoodSearchDto();
+        warehouseGoodSearchDto.setPageNumber(0);
+        warehouseGoodSearchDto.setSize(10);
         warehouseGoods.add(new WarehouseGood());
         when(goodRepository.findAll()).thenReturn(warehouseGoods);
 
         // when
-        List<WarehouseGoodFullDto> result = goodService.readAll();
+        List<WarehouseGoodFullDto> result = goodService.readAll(warehouseGoodSearchDto);
 
         // then
         assertFalse(result.isEmpty());
@@ -235,10 +238,13 @@ class WarehouseGoodImplTest {
     @Test
     void readAll_EmptyList_ThrowsEmptyGoodsException() {
         // given
+        WarehouseGoodSearchDto warehouseGoodSearchDto = new WarehouseGoodSearchDto();
+        warehouseGoodSearchDto.setSize(10);
+        warehouseGoodSearchDto.setPageNumber(0);
         when(goodRepository.findAll()).thenReturn(new ArrayList<>());
 
         // then
-        assertThrows(EmptyGoodsException.class, () -> goodService.readAll());
+        assertThrows(EmptyGoodsException.class, () -> goodService.readAll(warehouseGoodSearchDto));
     }
 
     @Test

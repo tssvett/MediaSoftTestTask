@@ -1,6 +1,7 @@
 package com.warehousesystem.app.service;
 
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
+import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
@@ -43,7 +44,7 @@ public interface WarehouseGoodService {
      * Возвращает список всех имеющихся товаров на складе
      * @return - список
      */
-    List<WarehouseGoodFullDto> readAll() throws EmptyGoodsException;
+    List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException;
     WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**

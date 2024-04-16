@@ -1,6 +1,7 @@
 package com.warehousesystem.app.controller;
 
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
+import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
@@ -28,8 +29,8 @@ public class WarehouseController {
     public WarehouseGoodService warehouseGoodService;
 
     @GetMapping("/goods")
-    public ResponseEntity<List<WarehouseGoodFullDto>> getGoodsAll() throws EmptyGoodsException {
-        final List<WarehouseGoodFullDto> goods = warehouseGoodService.readAll();
+    public ResponseEntity<List<WarehouseGoodFullDto>> getGoodsAll(@Valid @RequestBody WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
+        final List<WarehouseGoodFullDto> goods = warehouseGoodService.readAll(warehouseGoodSearchDto);
         return new ResponseEntity<>(goods, HttpStatus.OK);
     }
 
