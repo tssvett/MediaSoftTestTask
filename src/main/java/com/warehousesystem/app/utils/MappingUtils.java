@@ -60,5 +60,15 @@ public class MappingUtils {
                 .build();
     }
 
+    public WarehouseGoodUpdateDto mapToWarehouseGoodUpdateDto(WarehouseGoodFullDto warehouseGoodFullDto) {
 
+        return WarehouseGoodUpdateDto.builder()
+                .name(warehouseGoodFullDto.getName())
+                .article(warehouseGoodFullDto.getArticle())
+                .description(warehouseGoodFullDto.getDescription())
+                .category(warehouseGoodFullDto.getCategory())
+                .price(warehouseGoodFullDto.getPrice())
+                .quantity(warehouseGoodFullDto.getQuantity())
+                .build();
+    }
 }

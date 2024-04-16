@@ -27,15 +27,6 @@ public class OptimizedGoodsPriceSchedulerImpl implements OptimizedGoodsPriceSche
     public void changeGoodsValue() throws EmptyGoodsException, SQLUniqueException {
         System.out.println("Optimized scheduler");
         System.out.println(percentage);
-        WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
-                .price(100d)
-                .article("article")
-                .quantity(1)
-                .name("good")
-                .category("category")
-                .description("description")
-                .build();
-        warehouseGoodService.create(warehouseGoodUpdateDto);
-        System.out.println(warehouseGoodService.readAll().stream().map(good -> good.getPrice() * (100 + percentage) / 100).toArray()[0]);
+        //System.out.println(warehouseGoodService.readAll().stream().map(good -> good.getPrice() * (100 + percentage) / 100).toArray()[0]);
     }
 }
