@@ -3,6 +3,7 @@ package com.warehousesystem.app.scheduling.conditions;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 public class SchedulingAndOptimizationCondition extends AllNestedConditions {
 
@@ -17,6 +18,11 @@ public class SchedulingAndOptimizationCondition extends AllNestedConditions {
 
     @ConditionalOnProperty(value = "app.scheduling.optimization", havingValue = "true")
     static class OptimizationEnabled {
+
+    }
+
+    @Profile("default")
+    static class Default {
 
     }
 }
