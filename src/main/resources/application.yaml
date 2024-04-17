@@ -18,4 +18,4 @@ app:
     enabled: true
     period: 120000
     priceIncreasePercentage: 10
-    optimization: false
+    optimization: true
