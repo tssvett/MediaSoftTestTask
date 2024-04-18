@@ -2,6 +2,8 @@ server:
   port: ${SERVER_PORT:8080}
 
 spring:
+  profiles:
+    active: local
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/mediasoft-test-task
@@ -18,4 +20,4 @@ app:
     enabled: true
     period: 120000
     priceIncreasePercentage: 10
-    optimization: true
+    optimization: false
