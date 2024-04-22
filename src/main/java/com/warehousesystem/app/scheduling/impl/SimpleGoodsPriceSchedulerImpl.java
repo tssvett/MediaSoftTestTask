@@ -1,14 +1,13 @@
 package com.warehousesystem.app.scheduling.impl;
 
 import com.warehousesystem.app.annotation.MeasureWorkingTime;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.handler.exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.scheduling.SimpleGoodsPriceScheduler;
 import com.warehousesystem.app.scheduling.conditions.SchedulingAndNotOptimizedCondition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,8 +24,13 @@ public class SimpleGoodsPriceSchedulerImpl implements SimpleGoodsPriceScheduler 
 
     @Value("${app.scheduling.priceIncreasePercentage}")
     private int percentage;
-    @Autowired
-    private WarehouseGoodRepository warehouseGoodRepository;
+
+    private final WarehouseGoodRepository warehouseGoodRepository;
+
+    public SimpleGoodsPriceSchedulerImpl(WarehouseGoodRepository warehouseGoodRepository) {
+        this.warehouseGoodRepository = warehouseGoodRepository;
+
+    }
 
 
     @Transactional
@@ -34,12 +38,12 @@ public class SimpleGoodsPriceSchedulerImpl implements SimpleGoodsPriceScheduler 
     @Scheduled(fixedDelayString = "${app.scheduling.period}")
     public void changeGoodsValue() throws NotFoundByIdException, SQLUniqueException, EmptyGoodsException {
         List<WarehouseGood> goods = warehouseGoodRepository.findAll()
-                        .stream()
-                        .map(this::increasePrice).toList();
+                .stream()
+                .map(this::increasePrice).toList();
         warehouseGoodRepository.saveAll(goods);
     }
 
-    private WarehouseGood increasePrice(WarehouseGood good){
+    private WarehouseGood increasePrice(WarehouseGood good) {
         good.setPrice(good.getPrice() * (100 + percentage) / 100);
         return good;
     }

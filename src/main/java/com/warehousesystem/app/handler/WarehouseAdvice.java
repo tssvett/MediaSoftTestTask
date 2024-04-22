@@ -1,9 +1,9 @@
 package com.warehousesystem.app.handler;
 
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.handler.exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,53 +12,77 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @ControllerAdvice
 public class WarehouseAdvice {
 
     @ExceptionHandler(NotFoundByIdException.class)
     public ResponseEntity<Response> handleException(Exception e) {
-        Response response = new Response("Товар с таким айди не найден");
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmptyGoodsException.class)
     public ResponseEntity<Response> handleEmptyGoodsException(Exception e) {
-        Response response = new Response("Склад пуст! Пора бы его наполнить....");
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getFieldErrors().get(0).getDefaultMessage();
-        String errorField = e.getFieldErrors().get(0).getField();
-        String responseMessage = "Для поля " + errorField + " возникла ошибка: " + errorMessage;
-        Response response = new Response(responseMessage);
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errors = e.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fieldError -> "Field '" + fieldError.getField() + "': " + fieldError.getDefaultMessage())
+                .toList();
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errors, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLUniqueException.class)
     public ResponseEntity<Response> handleException(SQLUniqueException e) {
-        Response response = new Response(e.getMessage());
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Response> handleException(MethodArgumentTypeMismatchException e) {
-        Response response = new Response(e.getMessage());
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Response> handleException(ConstraintViolationException e) {
-        Response response = new Response(e.getMessage());
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundByArticleException.class)
     public ResponseEntity<Response> handleException(NotFoundByArticleException e) {
-        Response response = new Response("Товар с таким артикулом не найден");
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        Response response = new Response(exceptionName, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

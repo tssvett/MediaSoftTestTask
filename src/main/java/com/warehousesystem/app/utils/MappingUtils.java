@@ -1,7 +1,6 @@
 package com.warehousesystem.app.utils;
 
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
-import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.model.WarehouseGood;
 import org.springframework.stereotype.Service;

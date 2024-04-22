@@ -2,7 +2,6 @@ package com.warehousesystem.app.scheduling.conditions;
 
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
 public class SchedulingAndOptimizationCondition extends AllNestedConditions {

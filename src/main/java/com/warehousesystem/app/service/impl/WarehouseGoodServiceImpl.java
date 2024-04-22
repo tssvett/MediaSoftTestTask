@@ -3,10 +3,10 @@ package com.warehousesystem.app.service.impl;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.handler.exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.service.WarehouseGoodService;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,7 +40,6 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
 
-
     @Override
     public WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
@@ -64,8 +62,6 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
 
-        // Вычисляем смещение для пагинации
-        int offset = pageNumber * size;
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
         List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
                 .stream()
@@ -97,8 +93,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             warehouseGood1.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(warehouseGood1);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGood1);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
@@ -122,8 +117,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             foundedGood.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(foundedGood);
             return mappingUtils.mapToWarehouseGoodFullDto(foundedGood);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }

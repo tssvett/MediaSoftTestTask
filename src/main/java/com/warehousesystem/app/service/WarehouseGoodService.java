@@ -3,10 +3,10 @@ package com.warehousesystem.app.service;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +15,7 @@ public interface WarehouseGoodService {
 
     /**
      * Создает новый товар на складе
+     *
      * @param warehouseGood - товар для создания
      */
     WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGood) throws SQLUniqueException;
@@ -22,6 +23,7 @@ public interface WarehouseGoodService {
 
     /**
      * Возвращает товар на складе по его уникальному артикулу
+     *
      * @param id
      * @return - объект товара с заданным артикулом
      */
@@ -29,6 +31,7 @@ public interface WarehouseGoodService {
 
     /**
      * Возвращает товар на складе по его уникальному имени
+     *
      * @param article
      * @return - список товаров с заданным именем
      */
@@ -42,13 +45,16 @@ public interface WarehouseGoodService {
 
     /**
      * Возвращает список всех имеющихся товаров на складе
+     *
      * @return - список
      */
     List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException;
+
     WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Обновляет товар на складе по заданному имени
+     *
      * @param warehouseGood
      * @param article
      */
