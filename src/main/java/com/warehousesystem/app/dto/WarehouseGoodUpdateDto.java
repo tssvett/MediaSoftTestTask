@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -28,7 +30,7 @@ public class WarehouseGoodUpdateDto {
 
     @NotNull(message = "Price cannot be null")
     @Min(value = 1, message = "Price cannot be negative or zero")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
