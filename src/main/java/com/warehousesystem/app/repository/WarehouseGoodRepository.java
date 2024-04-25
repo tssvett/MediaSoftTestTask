@@ -1,8 +1,10 @@
 package com.warehousesystem.app.repository;
 
 import com.warehousesystem.app.model.WarehouseGood;
+import com.warehousesystem.app.search.criteria.SearchCriteria;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,7 @@ import java.util.UUID;
 
 
 @Repository
-public interface WarehouseGoodRepository extends JpaRepository<WarehouseGood, UUID> {
+public interface WarehouseGoodRepository extends JpaRepository<WarehouseGood, UUID>, JpaSpecificationExecutor<WarehouseGood> {
     
     WarehouseGood getReferenceById(UUID id);
     
@@ -24,4 +26,6 @@ public interface WarehouseGoodRepository extends JpaRepository<WarehouseGood, UU
 
     @Query("select w from WarehouseGood w order by w.price asc")
     List<WarehouseGood> findAll(Pageable pageable);
+
+    List<WarehouseGood> findAll(List<SearchCriteria> searchCriteria, PageRequest pageRequest);
 }

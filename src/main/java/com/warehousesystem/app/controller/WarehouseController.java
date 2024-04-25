@@ -7,10 +7,12 @@ import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.search.criteria.SearchCriteria;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -89,5 +91,11 @@ public class WarehouseController {
     public ResponseEntity<WarehouseGoodFullDto> deleteGoodByArticle(@RequestParam(value = "article" ) @Valid @PathVariable String name) throws NotFoundByArticleException {
         warehouseGoodService.deleteByArticle(name);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/sortBy")
+    public ResponseEntity<List<WarehouseGoodFullDto>> getSortedGoods(@Valid @RequestBody List<SearchCriteria<?>> conditions, Pageable pageable) throws EmptyGoodsException, Exception {
+    return new ResponseEntity<>(warehouseGoodService.readSortedGoods(conditions, pageable), HttpStatus.OK);
+
     }
 }
