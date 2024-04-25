@@ -1,22 +1,17 @@
 package com.warehousesystem.app.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.converter.DateConverter;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Convert;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -47,7 +42,7 @@ public class WarehouseGood {
     private String category;
 
     @Column(name = "price")
-    private Double price;
+    private BigDecimal price;
 
     @Column(name = "quantity")
     private Integer quantity;
