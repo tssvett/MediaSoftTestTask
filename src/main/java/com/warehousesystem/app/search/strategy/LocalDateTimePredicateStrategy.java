@@ -1,12 +1,12 @@
 package com.warehousesystem.app.search.strategy;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 
 import java.time.LocalDateTime;
 
-public class LocalDatePredicateStrategy implements PredicateStrategy<LocalDateTime> {
+public class LocalDateTimePredicateStrategy implements PredicateStrategy<LocalDateTime> {
 
     @Override
     public Predicate getEqualsPattern(Expression<LocalDateTime> expression, LocalDateTime value, CriteriaBuilder cb) {

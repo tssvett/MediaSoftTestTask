@@ -3,6 +3,7 @@ package com.warehousesystem.app.search.criteria;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.warehousesystem.app.search.enums.OperationType;
+import com.warehousesystem.app.search.strategy.PredicateStrategy;
 import jakarta.validation.constraints.NotNull;
 
 @JsonTypeInfo(
@@ -16,10 +17,10 @@ import jakarta.validation.constraints.NotNull;
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "article"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "description"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "category"),
-        //@JsonSubTypes.Type(value = BigDecimalSearchCriteria.class, name = "price"),
-        //@JsonSubTypes.Type(value = IntegerSearchCriteria.class, name = "quantity"),
-        //@JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "last_update"),
-        //@JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "creation_time")
+        @JsonSubTypes.Type(value = BigDecimalSearchCriteria.class, name = "price"),
+        @JsonSubTypes.Type(value = IntegerSearchCriteria.class, name = "quantity"),
+        @JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "lastUpdateTime"),
+        @JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "creationTime")
 })
 
 public interface SearchCriteria<T> {
@@ -30,5 +31,9 @@ public interface SearchCriteria<T> {
 
     @NotNull
     OperationType getOperation();
+
+    PredicateStrategy<T> getStrategy();
+
+
 
 }

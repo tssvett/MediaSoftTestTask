@@ -4,24 +4,27 @@ import com.warehousesystem.app.search.enums.OperationType;
 
 import com.warehousesystem.app.search.strategy.PredicateStrategy;
 import com.warehousesystem.app.search.strategy.StringPredicateStrategy;
+import com.warehousesystem.app.search.strategy.UUIDPredicateStrategy;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.util.Locale;
+import java.util.UUID;
 
-public class StringSearchCriteria implements SearchCriteria<String> {
+public class UUIDSearchCriteria implements SearchCriteria<UUID> {
 
     @Getter
-    private PredicateStrategy<String> strategy = new StringPredicateStrategy();
+    private PredicateStrategy<UUID> strategy = new UUIDPredicateStrategy();
 
     private String field;
 
     private String operation;
 
-    @NotBlank
-    private String value;
+    @NotNull
+    private UUID value;
 
-   @Override
+    @Override
     public OperationType getOperation() {
         return OperationType.getOperation(operation);
     }
@@ -32,8 +35,9 @@ public class StringSearchCriteria implements SearchCriteria<String> {
     }
 
     @Override
-    public String getValue() {
+    public UUID getValue() {
         return value;
     }
 
 }
+

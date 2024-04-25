@@ -27,5 +27,4 @@ public interface WarehouseGoodRepository extends JpaRepository<WarehouseGood, UU
     @Query("select w from WarehouseGood w order by w.price asc")
     List<WarehouseGood> findAll(Pageable pageable);
 
-    List<WarehouseGood> findAll(List<SearchCriteria> searchCriteria, PageRequest pageRequest);
 }

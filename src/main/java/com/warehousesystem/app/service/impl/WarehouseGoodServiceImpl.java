@@ -8,29 +8,32 @@ import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
-import com.warehousesystem.app.repository.SearchRepository;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.search.criteria.SearchCriteria;
+import com.warehousesystem.app.search.enums.OperationType;
+import com.warehousesystem.app.search.strategy.PredicateStrategy;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import com.warehousesystem.app.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.util.CastUtils.cast;
 
 @Service
 public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
     @Autowired
     private WarehouseGoodRepository warehouseGoodRepository;
-
-    @Autowired
-    private SearchRepository searchRepository;
 
     @Autowired
     private MappingUtils mappingUtils;
@@ -159,13 +162,28 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria<?>> criteriaList, Pageable criteria) throws Exception, EmptyGoodsException {
-        List<WarehouseGoodFullDto> goods = searchRepository.findAll(criteriaList, criteria).stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList());
-        if (goods.isEmpty()) {
-            throw new EmptyGoodsException();
-        }
-        return goods;
+    public List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria<?>> criteriaList, Pageable pageable) throws Exception, EmptyGoodsException {
+        int size = pageable.getPageSize();
+        int pageNumber =pageable.getPageNumber();
 
+        Specification<WarehouseGood> specification = (entity, query,cb) -> {
+            Predicate predicate = cb.conjunction();
+            for (SearchCriteria<?> criteria : criteriaList) {
+                OperationType operationType = criteria.getOperation();
+                PredicateStrategy<?> strategy = criteria.getStrategy();
+                switch (operationType){
+                    case EQUALS -> predicate = cb.and(predicate, strategy.getEqualsPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case RIGHT_LIMIT -> predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LEFT_LIMIT -> predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                    case LIKE -> predicate = cb.and(predicate, strategy.getLikePattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
+                }
+            }
+            return predicate;
+        };
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, size, pageable.getSort());
+        Page<WarehouseGood> goods = warehouseGoodRepository.findAll(specification, pageRequest);
+        return goods.getContent().stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList());
 
     }
 }

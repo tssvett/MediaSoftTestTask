@@ -1,27 +1,28 @@
 package com.warehousesystem.app.search.criteria;
 
 import com.warehousesystem.app.search.enums.OperationType;
-
+import com.warehousesystem.app.search.strategy.BigDecimalPredicateStrategy;
+import com.warehousesystem.app.search.strategy.IntegerPredicateStrategy;
 import com.warehousesystem.app.search.strategy.PredicateStrategy;
-import com.warehousesystem.app.search.strategy.StringPredicateStrategy;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-import java.util.Locale;
+import java.math.BigDecimal;
 
-public class StringSearchCriteria implements SearchCriteria<String> {
+public class IntegerSearchCriteria implements SearchCriteria<Integer> {
 
     @Getter
-    private PredicateStrategy<String> strategy = new StringPredicateStrategy();
+    private PredicateStrategy<Integer> strategy = new IntegerPredicateStrategy();
 
     private String field;
 
     private String operation;
 
-    @NotBlank
-    private String value;
+    @NotNull
+    private Integer value;
 
-   @Override
+    @Override
     public OperationType getOperation() {
         return OperationType.getOperation(operation);
     }
@@ -32,7 +33,7 @@ public class StringSearchCriteria implements SearchCriteria<String> {
     }
 
     @Override
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 
