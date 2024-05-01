@@ -1,11 +1,12 @@
 package com.warehousesystem.app.controller;
 
+import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import jakarta.transaction.Transactional;
@@ -35,7 +36,7 @@ public class WarehouseController {
     }
 
     @PostMapping("/goods")
-    public ResponseEntity<WarehouseGoodFullDto> createGood(@Valid @RequestBody WarehouseGoodUpdateDto warehouseGood) throws SQLUniqueException {
+    public ResponseEntity<WarehouseGoodFullDto> createGood(@Valid @RequestBody WarehouseGoodCreateDto warehouseGood) throws SQLUniqueException {
         WarehouseGoodFullDto good = warehouseGoodService.create(warehouseGood);
         return new ResponseEntity<>(good, HttpStatus.CREATED);
     }
@@ -48,14 +49,14 @@ public class WarehouseController {
 
 
     @GetMapping("/goodsById")
-    public ResponseEntity<WarehouseGoodFullDto> getGoodById(@RequestParam(value = "id" )@Valid @PathVariable UUID id) throws NotFoundByIdException {
+    public ResponseEntity<WarehouseGoodFullDto> getGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
         final WarehouseGoodFullDto good = warehouseGoodService.readById(id);
         return new ResponseEntity<>(good, HttpStatus.OK);
     }
 
     @Transactional
     @PutMapping("/goodsById")
-    public ResponseEntity<WarehouseGoodFullDto> updateGoodById(@RequestParam(value = "id" )@Valid @PathVariable UUID id,
+    public ResponseEntity<WarehouseGoodFullDto> updateGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id,
                                                                @Valid @RequestBody WarehouseGoodUpdateDto good) throws NotFoundByIdException, SQLUniqueException {
         WarehouseGoodFullDto newGood = warehouseGoodService.updateById(good, id);
         return new ResponseEntity<>(newGood, HttpStatus.OK);
@@ -64,29 +65,28 @@ public class WarehouseController {
 
     @Transactional
     @DeleteMapping("/goodsById")
-    public ResponseEntity<WarehouseGoodFullDto> deleteGoodById(@RequestParam(value = "id" )@Valid @PathVariable UUID id) throws NotFoundByIdException {
+    public ResponseEntity<WarehouseGoodFullDto> deleteGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
         warehouseGoodService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/goodsByArticle")
-    public ResponseEntity<WarehouseGoodFullDto> getGoodByArticle(@RequestParam(value = "article" )@Valid @PathVariable String article) throws NotFoundByArticleException {
+    public ResponseEntity<WarehouseGoodFullDto> getGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String article) throws NotFoundByArticleException {
         final WarehouseGoodFullDto good = warehouseGoodService.readByArticle(article);
         return new ResponseEntity<>(good, HttpStatus.OK);
     }
 
 
-
     @Transactional
     @PutMapping("/goodsByArticle")
-    public ResponseEntity<WarehouseGoodFullDto> updateGoodByArticle(@RequestParam(value = "article" ) @Valid @PathVariable String name, @RequestBody @Valid WarehouseGoodUpdateDto goodBody) throws NotFoundByArticleException, SQLUniqueException {
+    public ResponseEntity<WarehouseGoodFullDto> updateGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name, @RequestBody @Valid WarehouseGoodUpdateDto goodBody) throws NotFoundByArticleException, SQLUniqueException {
         WarehouseGoodFullDto good = warehouseGoodService.updateByArticle(goodBody, name);
         return new ResponseEntity<>(good, HttpStatus.OK);
     }
 
     @Transactional
     @DeleteMapping("/goodsByArticle")
-    public ResponseEntity<WarehouseGoodFullDto> deleteGoodByArticle(@RequestParam(value = "article" ) @Valid @PathVariable String name) throws NotFoundByArticleException {
+    public ResponseEntity<WarehouseGoodFullDto> deleteGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name) throws NotFoundByArticleException {
         warehouseGoodService.deleteByArticle(name);
         return new ResponseEntity<>(HttpStatus.OK);
     }
