@@ -8,7 +8,7 @@ import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
-import com.warehousesystem.app.model.WarehouseGood;
+import com.warehousesystem.app.entity.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.utils.MappingUtils;
 import org.junit.jupiter.api.BeforeAll;

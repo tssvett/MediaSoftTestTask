@@ -1,7 +1,6 @@
 package com.warehousesystem.app.repository;
 
-import com.warehousesystem.app.model.WarehouseGood;
-import org.springframework.data.domain.PageRequest;
+import com.warehousesystem.app.entity.WarehouseGood;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
