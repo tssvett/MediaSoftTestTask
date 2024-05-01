@@ -44,7 +44,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
-            throw new NotFoundByIdException();
+            throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
         return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceById(id));
     }
@@ -52,7 +52,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public WarehouseGoodFullDto readByArticle(String article) throws NotFoundByArticleException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
-            throw new NotFoundByArticleException();
+            throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
 
         return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceByArticle(article));
@@ -72,7 +72,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
                 .collect(Collectors.toList());
 
         if (goods.isEmpty()) {
-            throw new EmptyGoodsException();
+            throw new EmptyGoodsException("Warehouse is empty");
         }
 
         return goods;
@@ -81,7 +81,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
         if (!warehouseGoodRepository.existsById(id)) {
-            throw new NotFoundByIdException();
+            throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
         WarehouseGood warehouseGood1 = warehouseGoodRepository.getReferenceById(id);
         try {
@@ -105,7 +105,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
-            throw new NotFoundByArticleException();
+            throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
         WarehouseGood foundedGood = warehouseGoodRepository.getReferenceByArticle(article);
         try {
@@ -128,7 +128,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public void deleteById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
-            throw new NotFoundByIdException();
+            throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
         warehouseGoodRepository.deleteById(id);
     }
@@ -136,7 +136,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     @Override
     public void deleteByArticle(String article) throws NotFoundByArticleException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
-            throw new NotFoundByArticleException();
+            throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
         warehouseGoodRepository.deleteByArticle(article);
     }
@@ -145,7 +145,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     public void deleteAll() throws EmptyGoodsException {
         List<WarehouseGood> goods = warehouseGoodRepository.findAll();
         if (goods.isEmpty()) {
-            throw new EmptyGoodsException();
+            throw new EmptyGoodsException("Warehouse is empty");
         }
         warehouseGoodRepository.deleteAll();
     }
