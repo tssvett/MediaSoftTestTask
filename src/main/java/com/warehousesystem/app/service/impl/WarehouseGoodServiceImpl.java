@@ -1,11 +1,12 @@
 package com.warehousesystem.app.service.impl;
 
+import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,15 +31,14 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     private MappingUtils mappingUtils;
 
     @Override
-    public WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGoodUpdateDto) throws SQLUniqueException {
+    public WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGoodCreateDto) throws SQLUniqueException {
         try {
-            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodUpdateDto);
+            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodCreateDto);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.save(warehouseGood));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
-
 
 
     @Override
@@ -97,8 +96,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             warehouseGood1.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(warehouseGood1);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGood1);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
@@ -122,8 +120,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             foundedGood.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(foundedGood);
             return mappingUtils.mapToWarehouseGoodFullDto(foundedGood);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
