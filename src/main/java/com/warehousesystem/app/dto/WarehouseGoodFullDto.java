@@ -1,6 +1,7 @@
 package com.warehousesystem.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.warehousesystem.app.enums.CurrencyType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +41,9 @@ public class WarehouseGoodFullDto {
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
     private Long quantity;
+
+    @NotNull
+    private CurrencyType currency;
 
     @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     private LocalDateTime lastUpdateTime;

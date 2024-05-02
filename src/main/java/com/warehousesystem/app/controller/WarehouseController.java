@@ -8,6 +8,7 @@ import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.properties.CurrencyConfig;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -28,6 +29,7 @@ public class WarehouseController {
 
     @Autowired
     public WarehouseGoodService warehouseGoodService;
+
 
     @GetMapping("/goods")
     public ResponseEntity<List<WarehouseGoodFullDto>> getGoodsAll(@Valid @RequestBody WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {

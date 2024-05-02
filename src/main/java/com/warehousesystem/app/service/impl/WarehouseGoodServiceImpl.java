@@ -1,5 +1,6 @@
 package com.warehousesystem.app.service.impl;
 
+import com.warehousesystem.app.currency.CurrencyRateProvider;
 import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +29,9 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
     @Autowired
     private WarehouseGoodRepository warehouseGoodRepository;
+
+    @Autowired
+    private CurrencyRateProvider currencyRateProvider;
 
     @Autowired
     private MappingUtils mappingUtils;
@@ -46,7 +52,10 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
-        return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceById(id));
+        WarehouseGoodFullDto warehouseGoodFullDto = mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceById(id));
+        warehouseGoodFullDto.setPrice(warehouseGoodFullDto.getPrice().multiply(currencyRateProvider.getCurrencyValue()).setScale(2, RoundingMode.HALF_UP));
+        warehouseGoodFullDto.setCurrency(currencyRateProvider.getCurrencyType());
+        return warehouseGoodFullDto;
     }
 
     @Override
@@ -54,23 +63,27 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
         if (!warehouseGoodRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
-
-        return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceByArticle(article));
+        WarehouseGoodFullDto warehouseGoodFullDto = mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceByArticle(article));
+        warehouseGoodFullDto.setPrice(warehouseGoodFullDto.getPrice().multiply(currencyRateProvider.getCurrencyValue()).setScale(2, RoundingMode.HALF_UP));
+        warehouseGoodFullDto.setCurrency(currencyRateProvider.getCurrencyType());
+        return warehouseGoodFullDto;
     }
 
     @Override
     public List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
-
-        // Вычисляем смещение для пагинации
-        int offset = pageNumber * size;
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
+
+        BigDecimal currencyRate = currencyRateProvider.getCurrencyValue();
         List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
                 .stream()
                 .map(mappingUtils::mapToWarehouseGoodFullDto)
                 .collect(Collectors.toList());
-
+        goods.forEach(good -> {
+            good.setPrice(good.getPrice().multiply(currencyRate).setScale(2, RoundingMode.HALF_UP));
+            good.setCurrency(currencyRateProvider.getCurrencyType());
+        });
         if (goods.isEmpty()) {
             throw new EmptyGoodsException("Warehouse is empty");
         }
