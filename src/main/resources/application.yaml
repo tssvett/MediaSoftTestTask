@@ -12,3 +12,5 @@ spring:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
