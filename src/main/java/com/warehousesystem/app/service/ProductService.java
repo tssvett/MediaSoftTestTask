@@ -1,10 +1,10 @@
 package com.warehousesystem.app.service;
 
-import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
-import com.warehousesystem.app.dto.WarehouseGoodFullDto;
-import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
-import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
+import com.warehousesystem.app.dto.ProductCreateDto;
+import com.warehousesystem.app.dto.ProductFullDto;
+import com.warehousesystem.app.dto.ProductSearchDto;
+import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.handler.Exception.EmptyProductException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
@@ -12,13 +12,13 @@ import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import java.util.List;
 import java.util.UUID;
 
-public interface WarehouseGoodService {
+public interface ProductService {
 
     /**
      * Создает новый товар на складе
      * @param warehouseGood - товар для создания
      */
-    WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGood) throws SQLUniqueException;
+    ProductFullDto create(ProductCreateDto warehouseGood) throws SQLUniqueException;
 
 
     /**
@@ -26,14 +26,14 @@ public interface WarehouseGoodService {
      * @param id
      * @return - объект товара с заданным артикулом
      */
-    WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException;
+    ProductFullDto readById(UUID id) throws NotFoundByIdException;
 
     /**
      * Возвращает товар на складе по его уникальному имени
      * @param article
      * @return - список товаров с заданным именем
      */
-    WarehouseGoodFullDto readByArticle(String article) throws NotFoundByArticleException;
+    ProductFullDto readByArticle(String article) throws NotFoundByArticleException;
 
     /**
      * Обновляет товар на складе по заданному артикулу
@@ -45,15 +45,15 @@ public interface WarehouseGoodService {
      * Возвращает список всех имеющихся товаров на складе
      * @return - список
      */
-    List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException;
-    WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
+    List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException;
+    ProductFullDto updateById(ProductUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
 
     /**
      * Обновляет товар на складе по заданному имени
      * @param warehouseGood
      * @param article
      */
-    WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException;
+    ProductFullDto updateByArticle(ProductUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException;
 
     /**
      * Удаляет товар на складе по заданному артикулу
@@ -72,6 +72,6 @@ public interface WarehouseGoodService {
     /**
      * Удаляет все....
      */
-    void deleteAll() throws NotFoundByArticleException, EmptyGoodsException;
+    void deleteAll() throws NotFoundByArticleException, EmptyProductException;
 
 }

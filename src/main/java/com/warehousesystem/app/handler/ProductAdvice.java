@@ -1,6 +1,6 @@
 package com.warehousesystem.app.handler;
 
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.Exception.EmptyProductException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
@@ -16,31 +16,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @ControllerAdvice
-public class WarehouseAdvice {
+public class ProductAdvice {
 
     @ExceptionHandler(NotFoundByIdException.class)
-    public ResponseEntity<Response> handleException(NotFoundByIdException e) {
+    public ResponseEntity<ErrorDetails> handleException(NotFoundByIdException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EmptyGoodsException.class)
-    public ResponseEntity<Response> handleEmptyGoodsException(EmptyGoodsException e) {
+    @ExceptionHandler(EmptyProductException.class)
+    public ResponseEntity<ErrorDetails> handleEmptyGoodsException(EmptyProductException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Response> handleException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorDetails> handleException(MethodArgumentNotValidException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errors = e.getBindingResult().getFieldErrors()
                 .stream()
@@ -48,48 +48,48 @@ public class WarehouseAdvice {
                 .toList();
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errors, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errors, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLUniqueException.class)
-    public ResponseEntity<Response> handleException(SQLUniqueException e) {
+    public ResponseEntity<ErrorDetails> handleException(SQLUniqueException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Response> handleException(MethodArgumentTypeMismatchException e) {
+    public ResponseEntity<ErrorDetails> handleException(MethodArgumentTypeMismatchException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Response> handleException(ConstraintViolationException e) {
+    public ResponseEntity<ErrorDetails> handleException(ConstraintViolationException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundByArticleException.class)
-    public ResponseEntity<Response> handleException(NotFoundByArticleException e) {
+    public ResponseEntity<ErrorDetails> handleException(NotFoundByArticleException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();
         String exceptionClass = e.getStackTrace()[0].getClassName();
-        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

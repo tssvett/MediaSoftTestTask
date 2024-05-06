@@ -1,15 +1,15 @@
 package com.warehousesystem.app.service.impl;
 
 
-import com.warehousesystem.app.dto.WarehouseGoodFullDto;
-import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
-import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
+import com.warehousesystem.app.dto.ProductFullDto;
+import com.warehousesystem.app.dto.ProductSearchDto;
+import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.handler.Exception.EmptyProductException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
-import com.warehousesystem.app.model.WarehouseGood;
-import com.warehousesystem.app.repository.WarehouseGoodRepository;
+import com.warehousesystem.app.model.Product;
+import com.warehousesystem.app.repository.ProductRepository;
 import com.warehousesystem.app.utils.MappingUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,44 +32,44 @@ import static org.mockito.Mockito.*;
 class WarehouseGoodImplTest {
 
     @Mock
-    WarehouseGoodRepository goodRepository;
+    ProductRepository goodRepository;
 
     @Mock
     MappingUtils mappingUtils;
 
     @InjectMocks
-    WarehouseGoodServiceImpl goodService;
+    ProductServiceImpl goodService;
 
-    static WarehouseGood good1;
-    static WarehouseGood good2;
-    static WarehouseGood good3;
-    static WarehouseGood good4;
-    static WarehouseGood good5;
+    static Product good1;
+    static Product good2;
+    static Product good3;
+    static Product good4;
+    static Product good5;
 
-    static WarehouseGoodUpdateDto goodUpdateDto1;
-    static WarehouseGoodUpdateDto goodUpdateDto2;
-    static WarehouseGoodUpdateDto goodUpdateDto3;
+    static ProductUpdateDto goodUpdateDto1;
+    static ProductUpdateDto goodUpdateDto2;
+    static ProductUpdateDto goodUpdateDto3;
 
-    static WarehouseGoodFullDto goodFullDto1;
-    static WarehouseGoodFullDto goodFullDto2;
-    static WarehouseGoodFullDto goodFullDto3;
+    static ProductFullDto goodFullDto1;
+    static ProductFullDto goodFullDto2;
+    static ProductFullDto goodFullDto3;
 
 
     @BeforeAll
     static void setUp() {
-        good1 = new WarehouseGood();
-        good2 = new WarehouseGood();
-        good3 = new WarehouseGood();
-        good4 = new WarehouseGood();
-        good5 = new WarehouseGood();
+        good1 = new Product();
+        good2 = new Product();
+        good3 = new Product();
+        good4 = new Product();
+        good5 = new Product();
 
-        goodUpdateDto1 = new WarehouseGoodUpdateDto();
-        goodUpdateDto2 = new WarehouseGoodUpdateDto();
-        goodUpdateDto3 = new WarehouseGoodUpdateDto();
+        goodUpdateDto1 = new ProductUpdateDto();
+        goodUpdateDto2 = new ProductUpdateDto();
+        goodUpdateDto3 = new ProductUpdateDto();
 
-        goodFullDto1 = new WarehouseGoodFullDto();
-        goodFullDto2 = new WarehouseGoodFullDto();
-        goodFullDto3 = new WarehouseGoodFullDto();
+        goodFullDto1 = new ProductFullDto();
+        goodFullDto2 = new ProductFullDto();
+        goodFullDto3 = new ProductFullDto();
         //given
         good1.setName("Хороший товар");
         good1.setId(UUID.randomUUID());
@@ -147,7 +147,7 @@ class WarehouseGoodImplTest {
         when(goodRepository.save(good1)).thenReturn(good1);
         when(mappingUtils.mapToWarehouseGoodFullDto(good1)).thenReturn(goodFullDto1);
         //then
-        WarehouseGoodFullDto result = goodService.create(goodUpdateDto1);
+        ProductFullDto result = goodService.create(goodUpdateDto1);
         assertEquals(good1.getId(), result.getId());
         assertEquals(good1.getArticle(), result.getArticle());
         assertEquals(good1.getName(), result.getName());
@@ -163,13 +163,13 @@ class WarehouseGoodImplTest {
     @Test
     void readById_validUUID_CorrectFullDto() throws NotFoundByIdException {
         UUID validId = UUID.randomUUID();
-        WarehouseGoodFullDto expectedDto = new WarehouseGoodFullDto();
+        ProductFullDto expectedDto = new ProductFullDto();
         when(goodRepository.existsById(validId)).thenReturn(true);
-        when(goodRepository.getReferenceById(validId)).thenReturn(new WarehouseGood());
-        when(mappingUtils.mapToWarehouseGoodFullDto(any(WarehouseGood.class))).thenReturn(expectedDto);
+        when(goodRepository.getReferenceById(validId)).thenReturn(new Product());
+        when(mappingUtils.mapToWarehouseGoodFullDto(any(Product.class))).thenReturn(expectedDto);
 
         // when
-        WarehouseGoodFullDto result = goodService.readById(validId);
+        ProductFullDto result = goodService.readById(validId);
 
         // then
         assertEquals(expectedDto, result);
@@ -199,10 +199,10 @@ class WarehouseGoodImplTest {
 
         when(goodRepository.existsByArticle(validArticle)).thenReturn(true);
         when(goodRepository.getReferenceByArticle(validArticle)).thenReturn(good1);
-        WarehouseGoodFullDto expectedDto = mappingUtils.mapToWarehouseGoodFullDto(good1);
+        ProductFullDto expectedDto = mappingUtils.mapToWarehouseGoodFullDto(good1);
 
         // when
-        WarehouseGoodFullDto result = goodService.readByArticle(validArticle);
+        ProductFullDto result = goodService.readByArticle(validArticle);
 
         // then
         assertEquals(expectedDto, result);
@@ -219,17 +219,17 @@ class WarehouseGoodImplTest {
     }
 
     @Test
-    void readAll_CorrectGoodAdd_NonEmptyList() throws EmptyGoodsException {
+    void readAll_CorrectGoodAdd_NonEmptyList() throws EmptyProductException {
         // given
-        List<WarehouseGood> warehouseGoods = new ArrayList<>();
-        WarehouseGoodSearchDto warehouseGoodSearchDto = new WarehouseGoodSearchDto();
+        List<Product> warehouseGoods = new ArrayList<>();
+        ProductSearchDto warehouseGoodSearchDto = new ProductSearchDto();
         warehouseGoodSearchDto.setPageNumber(0);
         warehouseGoodSearchDto.setSize(10);
-        warehouseGoods.add(new WarehouseGood());
+        warehouseGoods.add(new Product());
         when(goodRepository.findAll()).thenReturn(warehouseGoods);
 
         // when
-        List<WarehouseGoodFullDto> result = goodService.readAll(warehouseGoodSearchDto);
+        List<ProductFullDto> result = goodService.readAll(warehouseGoodSearchDto);
 
         // then
         assertFalse(result.isEmpty());
@@ -238,13 +238,13 @@ class WarehouseGoodImplTest {
     @Test
     void readAll_EmptyList_ThrowsEmptyGoodsException() {
         // given
-        WarehouseGoodSearchDto warehouseGoodSearchDto = new WarehouseGoodSearchDto();
+        ProductSearchDto warehouseGoodSearchDto = new ProductSearchDto();
         warehouseGoodSearchDto.setSize(10);
         warehouseGoodSearchDto.setPageNumber(0);
         when(goodRepository.findAll()).thenReturn(new ArrayList<>());
 
         // then
-        assertThrows(EmptyGoodsException.class, () -> goodService.readAll(warehouseGoodSearchDto));
+        assertThrows(EmptyProductException.class, () -> goodService.readAll(warehouseGoodSearchDto));
     }
 
     @Test
@@ -254,14 +254,14 @@ class WarehouseGoodImplTest {
         when(goodRepository.existsById(id)).thenReturn(false);
 
         // then
-        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(new WarehouseGoodUpdateDto(), id));
+        assertThrows(NotFoundByIdException.class, () -> goodService.updateById(new ProductUpdateDto(), id));
     }
 
     @Test
     void updateById_validId_CorrectFullDto() throws NotFoundByIdException, SQLUniqueException {
         // given
         UUID id = UUID.randomUUID();
-        WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
+        ProductUpdateDto warehouseGoodUpdateDto = ProductUpdateDto.builder()
                 .name("Test Good")
                 .article("12345")
                 .description("Test Description")
@@ -269,7 +269,7 @@ class WarehouseGoodImplTest {
                 .price(10.0)
                 .quantity(5)
                 .build();
-        WarehouseGoodFullDto expectedDto = WarehouseGoodFullDto.builder()
+        ProductFullDto expectedDto = ProductFullDto.builder()
                 .id(id)
                 .name("Test Good")
                 .article("12345")
@@ -280,11 +280,11 @@ class WarehouseGoodImplTest {
                 .build();
 
         when(goodRepository.existsById(id)).thenReturn(true);
-        when(goodRepository.getReferenceById(id)).thenReturn(WarehouseGood.builder().build());
-        when(mappingUtils.mapToWarehouseGoodFullDto(any(WarehouseGood.class))).thenReturn(expectedDto);
+        when(goodRepository.getReferenceById(id)).thenReturn(Product.builder().build());
+        when(mappingUtils.mapToWarehouseGoodFullDto(any(Product.class))).thenReturn(expectedDto);
 
         // when
-        WarehouseGoodFullDto result = goodService.updateById(warehouseGoodUpdateDto, id);
+        ProductFullDto result = goodService.updateById(warehouseGoodUpdateDto, id);
 
         // then
         assertEquals(expectedDto, result);
@@ -294,7 +294,7 @@ class WarehouseGoodImplTest {
     void updateById_articleAlreadyExist_ThrowsSQLUniqueException() {
         // given
         UUID id = UUID.randomUUID();
-        WarehouseGoodUpdateDto warehouseGoodUpdateDto = WarehouseGoodUpdateDto.builder()
+        ProductUpdateDto warehouseGoodUpdateDto = ProductUpdateDto.builder()
                 .name("Test Good")
                 .article("12345")
                 .description("Test Description")
@@ -304,7 +304,7 @@ class WarehouseGoodImplTest {
                 .build();
 
         when(goodRepository.existsById(id)).thenReturn(true);
-        when(goodRepository.getReferenceById(id)).thenReturn(WarehouseGood.builder().article("54321").build());
+        when(goodRepository.getReferenceById(id)).thenReturn(Product.builder().article("54321").build());
         when(goodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle())).thenReturn(true);
 
         // then
@@ -377,9 +377,9 @@ class WarehouseGoodImplTest {
     @Test
     void deleteAll_doesNotThrowException_CorrectDelete() {
         // given
-        List<WarehouseGood> goods = new ArrayList<>();
-        goods.add(new WarehouseGood());
-        goods.add(new WarehouseGood());
+        List<Product> goods = new ArrayList<>();
+        goods.add(new Product());
+        goods.add(new Product());
         when(goodRepository.findAll()).thenReturn(goods);
 
         // when

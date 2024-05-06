@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WarehouseGoodSearchDto {
+public class ProductSearchDto {
 
     @Positive
     @Builder.Default

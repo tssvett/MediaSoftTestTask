@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WarehouseGoodUpdateDto {
+public class ProductUpdateDto {
 
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -34,5 +34,5 @@ public class WarehouseGoodUpdateDto {
 
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
-    private Integer quantity;
+    private BigDecimal quantity;
 }

@@ -11,5 +11,6 @@
     <include file="create-table-product.xml" relativeToChangelogFile="true"/>
     <include file="create-table-customer.xml" relativeToChangelogFile="true"/>
     <include file="create-table-order.xml" relativeToChangelogFile="true"/>
+    <include file="create-table-prepared_order.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

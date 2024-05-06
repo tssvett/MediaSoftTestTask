@@ -1,16 +1,16 @@
 package com.warehousesystem.app.service.impl;
 
-import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
-import com.warehousesystem.app.dto.WarehouseGoodFullDto;
-import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
-import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
+import com.warehousesystem.app.dto.ProductCreateDto;
+import com.warehousesystem.app.dto.ProductFullDto;
+import com.warehousesystem.app.dto.ProductSearchDto;
+import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.handler.Exception.EmptyProductException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
-import com.warehousesystem.app.model.WarehouseGood;
-import com.warehousesystem.app.repository.WarehouseGoodRepository;
-import com.warehousesystem.app.service.WarehouseGoodService;
+import com.warehousesystem.app.model.Product;
+import com.warehousesystem.app.repository.ProductRepository;
+import com.warehousesystem.app.service.ProductService;
 import com.warehousesystem.app.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -22,18 +22,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class WarehouseGoodServiceImpl implements WarehouseGoodService {
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    private WarehouseGoodRepository warehouseGoodRepository;
+    private ProductRepository warehouseGoodRepository;
 
     @Autowired
     private MappingUtils mappingUtils;
 
     @Override
-    public WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGoodCreateDto) throws SQLUniqueException {
+    public ProductFullDto create(ProductCreateDto warehouseGoodCreateDto) throws SQLUniqueException {
         try {
-            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodCreateDto);
+            Product warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodCreateDto);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.save(warehouseGood));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
@@ -42,7 +42,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
 
     @Override
-    public WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException {
+    public ProductFullDto readById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
@@ -50,7 +50,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public WarehouseGoodFullDto readByArticle(String article) throws NotFoundByArticleException {
+    public ProductFullDto readByArticle(String article) throws NotFoundByArticleException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
@@ -59,31 +59,31 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
+    public List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
 
         // Вычисляем смещение для пагинации
         int offset = pageNumber * size;
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
-        List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
+        List<ProductFullDto> goods = warehouseGoodRepository.findAll(request)
                 .stream()
                 .map(mappingUtils::mapToWarehouseGoodFullDto)
                 .collect(Collectors.toList());
 
         if (goods.isEmpty()) {
-            throw new EmptyGoodsException("Warehouse is empty");
+            throw new EmptyProductException("Warehouse is empty");
         }
 
         return goods;
     }
 
     @Override
-    public WarehouseGoodFullDto updateById(WarehouseGoodUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
+    public ProductFullDto updateById(ProductUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException("No Warehouse good with id: " + id);
         }
-        WarehouseGood warehouseGood1 = warehouseGoodRepository.getReferenceById(id);
+        Product warehouseGood1 = warehouseGoodRepository.getReferenceById(id);
         try {
             if (warehouseGoodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle()) && !warehouseGood1.getArticle().equals(warehouseGoodUpdateDto.getArticle())) {
                 throw new SQLUniqueException("Article already exist");
@@ -103,11 +103,11 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
 
     @Override
-    public WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
+    public ProductFullDto updateByArticle(ProductUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
         if (!warehouseGoodRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException("No Warehouse good with article: " + article);
         }
-        WarehouseGood foundedGood = warehouseGoodRepository.getReferenceByArticle(article);
+        Product foundedGood = warehouseGoodRepository.getReferenceByArticle(article);
         try {
             if (warehouseGoodRepository.existsByArticle(warehouseGoodUpdateDto.getArticle()) && !warehouseGoodUpdateDto.getArticle().equals(article)) {
                 throw new SQLUniqueException("Article already exist");
@@ -142,10 +142,10 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public void deleteAll() throws EmptyGoodsException {
-        List<WarehouseGood> goods = warehouseGoodRepository.findAll();
+    public void deleteAll() throws EmptyProductException {
+        List<Product> goods = warehouseGoodRepository.findAll();
         if (goods.isEmpty()) {
-            throw new EmptyGoodsException("Warehouse is empty");
+            throw new EmptyProductException("Warehouse is empty");
         }
         warehouseGoodRepository.deleteAll();
     }

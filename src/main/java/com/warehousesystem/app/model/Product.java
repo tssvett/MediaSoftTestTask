@@ -1,12 +1,8 @@
 package com.warehousesystem.app.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.converter.DateConverter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import lombok.*;
@@ -16,14 +12,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "warehouse_goods")
+@Table(name = "product")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public class WarehouseGood {
+public class Product {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,7 +41,7 @@ public class WarehouseGood {
     private BigDecimal price;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private BigDecimal quantity;
 
     @Column(name = "last_update")
     @UpdateTimestamp

@@ -1,16 +1,16 @@
 package com.warehousesystem.app.utils;
 
-import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
-import com.warehousesystem.app.dto.WarehouseGoodFullDto;
-import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.model.WarehouseGood;
+import com.warehousesystem.app.dto.ProductCreateDto;
+import com.warehousesystem.app.dto.ProductFullDto;
+import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.model.Product;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MappingUtils {
-    public WarehouseGoodFullDto mapToWarehouseGoodFullDto(WarehouseGood warehouseGood) {
+    public ProductFullDto mapToWarehouseGoodFullDto(Product warehouseGood) {
 
-        return WarehouseGoodFullDto.builder()
+        return ProductFullDto.builder()
                 .id(warehouseGood.getId())
                 .name(warehouseGood.getName())
                 .article(warehouseGood.getArticle())
@@ -23,9 +23,9 @@ public class MappingUtils {
                 .build();
     }
 
-    public WarehouseGood mapFullToWarehouseGood(WarehouseGoodFullDto warehouseGoodFullDto) {
+    public Product mapFullToWarehouseGood(ProductFullDto warehouseGoodFullDto) {
 
-        return WarehouseGood.builder()
+        return Product.builder()
                 .id(warehouseGoodFullDto.getId())
                 .name(warehouseGoodFullDto.getName())
                 .article(warehouseGoodFullDto.getArticle())
@@ -36,9 +36,9 @@ public class MappingUtils {
                 .build();
     }
 
-    public WarehouseGood mapUpdateToWarehouseGood(WarehouseGoodUpdateDto warehouseGoodUpdateDto) {
+    public Product mapUpdateToWarehouseGood(ProductUpdateDto warehouseGoodUpdateDto) {
 
-        return WarehouseGood.builder()
+        return Product.builder()
                 .name(warehouseGoodUpdateDto.getName())
                 .article(warehouseGoodUpdateDto.getArticle())
                 .description(warehouseGoodUpdateDto.getDescription())
@@ -48,9 +48,9 @@ public class MappingUtils {
                 .build();
     }
 
-    public WarehouseGood mapUpdateToWarehouseGood(WarehouseGoodCreateDto warehouseGoodCreateDto) {
+    public Product mapUpdateToWarehouseGood(ProductCreateDto warehouseGoodCreateDto) {
 
-        return WarehouseGood.builder()
+        return Product.builder()
                 .name(warehouseGoodCreateDto.getName())
                 .article(warehouseGoodCreateDto.getArticle())
                 .description(warehouseGoodCreateDto.getDescription())
@@ -60,9 +60,9 @@ public class MappingUtils {
                 .build();
     }
 
-    public WarehouseGoodUpdateDto mapToWarehouseGoodUpdateDto(WarehouseGood warehouseGood) {
+    public ProductUpdateDto mapToWarehouseGoodUpdateDto(Product warehouseGood) {
 
-        return WarehouseGoodUpdateDto.builder()
+        return ProductUpdateDto.builder()
                 .name(warehouseGood.getName())
                 .article(warehouseGood.getArticle())
                 .description(warehouseGood.getDescription())
