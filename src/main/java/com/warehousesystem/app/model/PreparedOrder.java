@@ -11,7 +11,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name ="prepared_order")
+@Table(name = "prepared_order")
 @Getter
 @Setter
 @Builder
@@ -28,4 +28,5 @@ public class PreparedOrder {
 
     @Column(name = "quantity")
     private BigDecimal quantity;
+
 }

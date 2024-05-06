@@ -1,19 +1,14 @@
 package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.warehousesystem.app.converter.DateConverter;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name ="`order`")
+@Table(name = "`order`")
 @Getter
 @Setter
 @Builder
@@ -40,10 +35,6 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Set<PreparedOrder> preparedOrders;
-
-
-
-
 
 
 }

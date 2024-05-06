@@ -3,9 +3,9 @@ package com.warehousesystem.app.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.converter.DateConverter;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
