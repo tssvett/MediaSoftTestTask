@@ -1,4 +1,4 @@
-package com.warehousesystem.app.dto;
+package com.warehousesystem.app.dto.product;
 
 
 import jakarta.validation.constraints.Positive;

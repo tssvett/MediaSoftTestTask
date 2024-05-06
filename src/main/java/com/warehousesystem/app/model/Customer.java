@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "customer")
+@Table(name ="customer")
 @Getter
 @Setter
 @Builder
@@ -38,6 +38,6 @@ public class Customer {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
-    private Set<PreparedOrder> preparedOrders;
+    private Set<PreparedProduct> preparedProducts;
 
 }

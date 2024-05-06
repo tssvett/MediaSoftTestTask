@@ -1,9 +1,9 @@
 package com.warehousesystem.app.service;
 
-import com.warehousesystem.app.dto.ProductCreateDto;
-import com.warehousesystem.app.dto.ProductFullDto;
-import com.warehousesystem.app.dto.ProductSearchDto;
-import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.dto.product.ProductCreateDto;
+import com.warehousesystem.app.dto.product.ProductFullDto;
+import com.warehousesystem.app.dto.product.ProductSearchDto;
+import com.warehousesystem.app.dto.product.ProductUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyProductException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;

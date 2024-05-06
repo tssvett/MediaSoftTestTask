@@ -1,4 +1,4 @@
-package com.warehousesystem.app.dto;
+package com.warehousesystem.app.dto.product;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductUpdateDto {
+public class ProductCreateDto {
 
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -35,4 +35,6 @@ public class ProductUpdateDto {
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
     private BigDecimal quantity;
+
+    private boolean isAvailable = true;
 }

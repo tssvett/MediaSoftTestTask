@@ -43,6 +43,9 @@ public class Product {
     @Column(name = "quantity")
     private BigDecimal quantity;
 
+    @Column(name = "is_available")
+    private boolean isAvailable = true;
+
     @Column(name = "last_update")
     @UpdateTimestamp
     @Convert(converter = DateConverter.class)

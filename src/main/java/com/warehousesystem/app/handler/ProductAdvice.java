@@ -1,9 +1,6 @@
 package com.warehousesystem.app.handler;
 
-import com.warehousesystem.app.handler.Exception.EmptyProductException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
+import com.warehousesystem.app.handler.Exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,6 +82,16 @@ public class ProductAdvice {
 
     @ExceptionHandler(NotFoundByArticleException.class)
     public ResponseEntity<ErrorDetails> handleException(NotFoundByArticleException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomerIdNullException.class)
+    public ResponseEntity<ErrorDetails> handleException(CustomerIdNullException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();

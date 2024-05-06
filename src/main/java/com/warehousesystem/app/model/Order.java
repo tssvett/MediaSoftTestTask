@@ -1,6 +1,7 @@
 package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.warehousesystem.app.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,14 +28,14 @@ public class Order {
     private Customer customerId;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    private Status status;
 
     @Column(name = "delivery_address", nullable = false)
     private String deliveryAddress;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
-    private Set<PreparedOrder> preparedOrders;
+    private Set<PreparedProduct> preparedProducts;
 
 
 }

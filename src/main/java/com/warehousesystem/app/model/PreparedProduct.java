@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public class PreparedOrder {
+public class PreparedProduct {
 
     @EmbeddedId
     private PreparedOrderPK pk;

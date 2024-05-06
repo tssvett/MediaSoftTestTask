@@ -1,8 +1,8 @@
 package com.warehousesystem.app.utils;
 
-import com.warehousesystem.app.dto.ProductCreateDto;
-import com.warehousesystem.app.dto.ProductFullDto;
-import com.warehousesystem.app.dto.ProductUpdateDto;
+import com.warehousesystem.app.dto.product.ProductCreateDto;
+import com.warehousesystem.app.dto.product.ProductFullDto;
+import com.warehousesystem.app.dto.product.ProductUpdateDto;
 import com.warehousesystem.app.model.Product;
 import org.springframework.stereotype.Service;
 
