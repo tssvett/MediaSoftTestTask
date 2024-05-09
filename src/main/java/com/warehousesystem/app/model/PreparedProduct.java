@@ -2,10 +2,7 @@ package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.model.compositekey.PreparedOrderPK;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,6 +19,14 @@ public class PreparedProduct {
 
     @EmbeddedId
     private PreparedOrderPK pk;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("orderId")
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("productId")
+    private Product product;
 
     @Column(name = "price")
     private BigDecimal price;

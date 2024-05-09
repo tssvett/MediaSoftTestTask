@@ -99,4 +99,57 @@ public class ProductAdvice {
         ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NotEnoughProductsException.class)
+    public ResponseEntity<ErrorDetails> handleException(NotEnoughProductsException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorDetails> handleException(NullPointerException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnavailableProductException.class)
+    public ResponseEntity<ErrorDetails> handleException(UnavailableProductException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UpdateOrderException.class)
+    public ResponseEntity<ErrorDetails> handleException(UpdateOrderException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(WrongCustomerIdException.class)
+    public ResponseEntity<ErrorDetails> handleException(WrongCustomerIdException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+
 }

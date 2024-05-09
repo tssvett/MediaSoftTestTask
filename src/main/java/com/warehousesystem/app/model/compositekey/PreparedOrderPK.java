@@ -1,24 +1,26 @@
 package com.warehousesystem.app.model.compositekey;
 
-import com.warehousesystem.app.model.Customer;
-import com.warehousesystem.app.model.Order;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.UUID;
 
 @Embeddable
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PreparedOrderPK implements Serializable {
 
+    @Column(name = "product_id")
+    private UUID productId;
 
-
-    @jakarta.persistence.ManyToOne
-    @jakarta.persistence.JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "id")
-    private Customer customerId;
-
-    @jakarta.persistence.ManyToOne
-    @jakarta.persistence.JoinColumn(name = "order_id", nullable = false, referencedColumnName = "id")
-    private Order orderId;
+    @Column(name = "order_id")
+    private UUID orderId;
 
 }

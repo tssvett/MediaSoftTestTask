@@ -35,4 +35,7 @@ public class ProductUpdateDto {
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
     private BigDecimal quantity;
+
+    @NotNull
+    private boolean isAvailable = true;
 }

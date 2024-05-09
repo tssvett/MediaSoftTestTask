@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderCreateDto {
+public class OrderUpdateDto {
 
     @NotBlank(message = "Delivery address cannot be empty")
     private String deliveryAddress;

@@ -23,18 +23,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "id")
     private Customer customerId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
     @Column(name = "delivery_address", nullable = false)
     private String deliveryAddress;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
+    @OneToMany(mappedBy = "order")
     private Set<PreparedProduct> preparedProducts;
 
 

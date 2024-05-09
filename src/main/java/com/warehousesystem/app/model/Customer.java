@@ -35,9 +35,4 @@ public class Customer {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Set<Order> orders;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id")
-    private Set<PreparedProduct> preparedProducts;
-
 }
