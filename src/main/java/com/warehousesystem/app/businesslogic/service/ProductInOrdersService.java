@@ -32,7 +32,6 @@ public class ProductInOrdersService {
     public Map<UUID, List<OrderInfo>> getOrderInfo() throws ExecutionException, InterruptedException {
         List<Order> confirmedOrders = orderRepository.findAllByStatus();
         List<String> logins = confirmedOrders.stream().map(order -> order.getCustomer().getLogin()).distinct().toList();
-        TimeUnit.SECONDS.sleep(5);
         Map<String, String> accounts = accountServiceClient.getAccountsByLogins(logins).get();
         Map<String, String> inns = crmServiceClient.getInnsByLogins(logins).get();
         log.info("Get accounts by logins: {}", logins);
