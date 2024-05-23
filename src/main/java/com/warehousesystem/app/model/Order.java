@@ -25,7 +25,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "id")
-    private Customer customerId;
+    private Customer customer;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
