@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerIdNullException("CustomerId Not found!"));
         Order order = Order.builder()
-                .customerId(customer)
+                .customer(customer)
                 .deliveryAddress(orderCreateDto.getDeliveryAddress())
                 .status(Status.CREATED)
                 .build();
@@ -105,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -156,7 +156,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -176,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -203,7 +203,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
         }
         order.setStatus(status.getStatus());
