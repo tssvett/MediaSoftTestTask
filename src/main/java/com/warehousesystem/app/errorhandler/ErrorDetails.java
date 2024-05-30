@@ -1,4 +1,4 @@
-package com.warehousesystem.app.handler;
+package com.warehousesystem.app.errorhandler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
