@@ -1,8 +1,8 @@
-package com.warehousesystem.app.kafka.config;
+package com.github.dariakozh.storage.configurations;
 
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,13 +19,12 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "kafka.enabled", matchIfMissing = false)
 public class KafkaConsumerConfig {
-
     @Value("${kafka.bootstrapAddress}")
     private String SERVER;
     @Value("${kafka.groupId}")
     private String groupId;
 
-    private ConsumerFactory<String, byte[]> consumerFactoryString() {
+    private ConsumerFactory<String, byte[]> consumerFactoryByteArray() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -36,10 +35,10 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, byte[]> kafkaListenerContainerFactoryByte() {
+    public ConcurrentKafkaListenerContainerFactory<String, byte[]> kafkaListenerContainerFactoryByteArray() {
         ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryString());
+        factory.setConsumerFactory(consumerFactoryByteArray());
         return factory;
     }
 }

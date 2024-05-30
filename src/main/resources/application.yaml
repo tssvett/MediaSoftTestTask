@@ -21,5 +21,5 @@ spring:
       enabled: true
 
   kafka:
-    bootstrapAddress: localhost:9091
+    bootstrapAddress: localhost:9092
     groupId: group1
