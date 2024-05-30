@@ -1,6 +1,6 @@
-package com.warehousesystem.app.handler;
+package com.warehousesystem.app.errorhandler;
 
-import com.warehousesystem.app.handler.Exception.*;
+import com.warehousesystem.app.errorhandler.Exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
