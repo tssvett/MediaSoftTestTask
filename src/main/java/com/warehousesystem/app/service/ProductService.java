@@ -4,10 +4,10 @@ import com.warehousesystem.app.dto.product.ProductCreateDto;
 import com.warehousesystem.app.dto.product.ProductFullDto;
 import com.warehousesystem.app.dto.product.ProductSearchDto;
 import com.warehousesystem.app.dto.product.ProductUpdateDto;
-import com.warehousesystem.app.errorhandler.Exception.EmptyProductException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.errorhandler.Exception.SQLUniqueException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByIdException;
+import dev.tssvett.handler.exception.EmptyProductException;
+import dev.tssvett.handler.exception.NotFoundByArticleException;
+import dev.tssvett.handler.exception.NotFoundByIdException;
+import dev.tssvett.handler.exception.SQLUniqueException;
 
 import java.util.List;
 import java.util.UUID;

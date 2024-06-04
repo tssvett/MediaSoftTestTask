@@ -18,7 +18,7 @@ spring:
 
   app:
     kafka:
-      enabled: true
+      enabled: false
 
   kafka:
     bootstrapAddress: localhost:9092

@@ -5,14 +5,26 @@ import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
 import com.warehousesystem.app.dto.product.ProductOrderDto;
 import com.warehousesystem.app.dto.status.StatusResponseDto;
-import com.warehousesystem.app.errorhandler.Exception.*;
 import com.warehousesystem.app.service.OrderService;
+import dev.tssvett.handler.exception.CustomerIdNullException;
+import dev.tssvett.handler.exception.NotEnoughProductsException;
+import dev.tssvett.handler.exception.UnavailableProductException;
+import dev.tssvett.handler.exception.UpdateOrderException;
+import dev.tssvett.handler.exception.WrongCustomerIdException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,8 +45,7 @@ public class OrderController {
     }
 
     @PatchMapping("/order/{orderId}")
-    public ResponseEntity<OrderUpdateDto> updateOrder(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody List<ProductOrderDto> products,
-                                                      @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException, UpdateOrderException, WrongCustomerIdException {
+    public ResponseEntity<OrderUpdateDto> updateOrder(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody List<ProductOrderDto> products, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException, UpdateOrderException, WrongCustomerIdException {
         OrderUpdateDto orderUpdateDto = orderService.update(orderId, products, customerId);
         return new ResponseEntity<>(orderUpdateDto, HttpStatus.OK);
     }

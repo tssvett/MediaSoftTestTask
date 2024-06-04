@@ -2,10 +2,14 @@ package com.warehousesystem.app.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.warehousesystem.app.errorhandler.Exception.*;
 import com.warehousesystem.app.kafka.event.Event;
 import com.warehousesystem.app.kafka.event.EventSource;
 import com.warehousesystem.app.kafka.handler.EventHandler;
+import dev.tssvett.handler.exception.CustomerIdNullException;
+import dev.tssvett.handler.exception.NotEnoughProductsException;
+import dev.tssvett.handler.exception.UnavailableProductException;
+import dev.tssvett.handler.exception.UpdateOrderException;
+import dev.tssvett.handler.exception.WrongCustomerIdException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

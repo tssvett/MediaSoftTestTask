@@ -2,12 +2,12 @@ package com.warehousesystem.app.kafka.handler;
 
 import com.warehousesystem.app.dto.order.OrderCreateDto;
 import com.warehousesystem.app.enums.Event;
-import com.warehousesystem.app.errorhandler.Exception.CustomerIdNullException;
-import com.warehousesystem.app.errorhandler.Exception.NotEnoughProductsException;
-import com.warehousesystem.app.errorhandler.Exception.UnavailableProductException;
 import com.warehousesystem.app.kafka.event.EventSource;
 import com.warehousesystem.app.kafka.event.impl.CreateOrderEventImpl;
 import com.warehousesystem.app.service.OrderService;
+import dev.tssvett.handler.exception.CustomerIdNullException;
+import dev.tssvett.handler.exception.NotEnoughProductsException;
+import dev.tssvett.handler.exception.UnavailableProductException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

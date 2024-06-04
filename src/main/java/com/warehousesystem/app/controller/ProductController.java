@@ -4,11 +4,12 @@ import com.warehousesystem.app.dto.product.ProductCreateDto;
 import com.warehousesystem.app.dto.product.ProductFullDto;
 import com.warehousesystem.app.dto.product.ProductSearchDto;
 import com.warehousesystem.app.dto.product.ProductUpdateDto;
-import com.warehousesystem.app.errorhandler.Exception.EmptyProductException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.errorhandler.Exception.SQLUniqueException;
+
 import com.warehousesystem.app.service.ProductService;
+import dev.tssvett.handler.exception.EmptyProductException;
+import dev.tssvett.handler.exception.NotFoundByArticleException;
+import dev.tssvett.handler.exception.NotFoundByIdException;
+import dev.tssvett.handler.exception.SQLUniqueException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import java.util.UUID;
 @RestController
 @Validated
 @CrossOrigin
-@RequestMapping("/warehouse")
 public class ProductController {
 
     @Autowired
