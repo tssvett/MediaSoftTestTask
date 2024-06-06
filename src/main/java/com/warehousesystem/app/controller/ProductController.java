@@ -4,30 +4,44 @@ import com.warehousesystem.app.dto.product.ProductCreateDto;
 import com.warehousesystem.app.dto.product.ProductFullDto;
 import com.warehousesystem.app.dto.product.ProductSearchDto;
 import com.warehousesystem.app.dto.product.ProductUpdateDto;
-import com.warehousesystem.app.errorhandler.Exception.EmptyProductException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.errorhandler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.errorhandler.Exception.SQLUniqueException;
+import com.warehousesystem.app.file.service.FileService;
 import com.warehousesystem.app.service.ProductService;
+import dev.tssvett.handler.exception.EmptyProductException;
+import dev.tssvett.handler.exception.NotFoundByArticleException;
+import dev.tssvett.handler.exception.NotFoundByIdException;
+import dev.tssvett.handler.exception.SQLUniqueException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @Validated
 @CrossOrigin
-@RequestMapping("/warehouse")
+@RequiredArgsConstructor
+@Slf4j
 public class ProductController {
-
-    @Autowired
-    public ProductService warehouseGoodService;
+    private final ProductService warehouseGoodService;
+    private final FileService fileService;
 
     @GetMapping("/goods")
     public ResponseEntity<List<ProductFullDto>> getGoodsAll(@Valid @RequestBody ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException {
@@ -89,5 +103,22 @@ public class ProductController {
     public ResponseEntity<ProductFullDto> deleteGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name) throws NotFoundByArticleException {
         warehouseGoodService.deleteByArticle(name);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{productId}/upload")
+    public String uploadFile(@PathVariable UUID productId, @RequestParam("file") MultipartFile file) throws NotFoundByIdException, IOException {
+        String key = fileService.upload(productId, file);
+        return key;
+    }
+
+    @GetMapping("/{productId}/download")
+    public void downloadFile(@PathVariable UUID productId, HttpServletResponse response) {
+        response.setHeader("Content-Disposition", "attachment; filename=\"images.zip\"");
+        response.setHeader("Content-Type", "application/zip");
+        try (OutputStream outputStream = response.getOutputStream()) {
+            fileService.download(productId, outputStream);
+        } catch (Exception e) {
+            log.error("Error while downloading file", e);
+        }
     }
 }

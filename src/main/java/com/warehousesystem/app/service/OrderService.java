@@ -5,7 +5,11 @@ import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
 import com.warehousesystem.app.dto.product.ProductOrderDto;
 import com.warehousesystem.app.dto.status.StatusResponseDto;
-import com.warehousesystem.app.errorhandler.Exception.*;
+import dev.tssvett.handler.exception.CustomerIdNullException;
+import dev.tssvett.handler.exception.NotEnoughProductsException;
+import dev.tssvett.handler.exception.UnavailableProductException;
+import dev.tssvett.handler.exception.UpdateOrderException;
+import dev.tssvett.handler.exception.WrongCustomerIdException;
 
 import java.util.List;
 import java.util.UUID;

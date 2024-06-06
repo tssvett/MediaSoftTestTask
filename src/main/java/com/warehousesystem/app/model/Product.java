@@ -59,4 +59,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private Set<PreparedProduct> preparedProducts;
+
+    @OneToMany(mappedBy = "product")
+    private Set<File> files;
 }
