@@ -19,6 +19,12 @@ spring:
   app:
     kafka:
       enabled: false
+  aws:
+    path: ${path}
+    accessKeyId: ${accessKeyId}
+    secretAccessKey: ${secretAccessKey}
+    region: ${region}
+    bucket: ${bucket}
 
   kafka:
     bootstrapAddress: localhost:9092
