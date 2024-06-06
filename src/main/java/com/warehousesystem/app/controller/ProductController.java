@@ -41,7 +41,7 @@ import java.util.UUID;
 @Slf4j
 public class ProductController {
     private final ProductService warehouseGoodService;
-    private final FileService fileStorage;
+    private final FileService fileService;
 
     @GetMapping("/goods")
     public ResponseEntity<List<ProductFullDto>> getGoodsAll(@Valid @RequestBody ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException {
@@ -107,7 +107,7 @@ public class ProductController {
 
     @PostMapping("/{productId}/upload")
     public String uploadFile(@PathVariable UUID productId, @RequestParam("file") MultipartFile file) throws NotFoundByIdException, IOException {
-        String key = fileStorage.upload(productId, file);
+        String key = fileService.upload(productId, file);
         return key;
     }
 
@@ -116,7 +116,7 @@ public class ProductController {
         response.setHeader("Content-Disposition", "attachment; filename=\"images.zip\"");
         response.setHeader("Content-Type", "application/zip");
         try (OutputStream outputStream = response.getOutputStream()) {
-            fileStorage.download(productId, outputStream);
+            fileService.download(productId, outputStream);
         } catch (Exception e) {
             log.error("Error while downloading file", e);
         }
