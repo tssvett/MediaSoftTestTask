@@ -75,5 +75,5 @@ public interface WarehouseGoodService {
      */
     void deleteAll() throws NotFoundByArticleException, EmptyGoodsException;
 
-    List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria<?>> criteriaList, Pageable criteria) throws Exception, EmptyGoodsException;
+    List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable criteria) throws Exception, EmptyGoodsException;
 }

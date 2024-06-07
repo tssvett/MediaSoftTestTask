@@ -1,43 +1,30 @@
 package com.warehousesystem.app.search.criteria;
 
 import com.warehousesystem.app.search.enums.OperationType;
-
 import com.warehousesystem.app.search.strategy.PredicateStrategy;
-import com.warehousesystem.app.search.strategy.StringPredicateStrategy;
 import com.warehousesystem.app.search.strategy.UUIDPredicateStrategy;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 
-import java.util.Locale;
 import java.util.UUID;
 
+@Data
+@Builder
 public class UUIDSearchCriteria implements SearchCriteria<UUID> {
 
-    @Getter
-    private PredicateStrategy<UUID> strategy = new UUIDPredicateStrategy();
+    private static PredicateStrategy<UUID> STRATEGY = new UUIDPredicateStrategy();
 
     private String field;
 
-    private String operation;
+    private OperationType operation;
 
     @NotNull
     private UUID value;
 
     @Override
-    public OperationType getOperation() {
-        return OperationType.getOperation(operation);
+    public PredicateStrategy<UUID> getStrategy() {
+        return STRATEGY;
     }
-
-    @Override
-    public String getField() {
-        return field;
-    }
-
-    @Override
-    public UUID getValue() {
-        return value;
-    }
-
 }
 

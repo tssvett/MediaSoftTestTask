@@ -1,19 +1,32 @@
 package com.warehousesystem.app.search.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum OperationType {
-EQUALS,
-LIKE,
-RIGHT_LIMIT,
-LEFT_LIMIT;
 
+    EQUALS("="),
+    GRATER_THAN_OR_EQ(">="),
+    LESS_THAN_OR_EQ("<="),
+    LIKE("~");
 
-public static OperationType getOperation(String operation) {
-    return switch (operation) {
-        case "LIKE", "~" -> OperationType.LIKE;
-        case "EQUAL", "=" -> OperationType.EQUALS;
-        case "GREATER_THAN_OR_EQUAL", ">=" -> OperationType.LEFT_LIMIT;
-        case "<=", "LESS_THAN_OR_EQUAL" -> OperationType.RIGHT_LIMIT;
-        default -> throw new IllegalStateException("Unexpected value: " + operation);
-        };
+    private final String code;
+
+    OperationType(String code) {
+        this.code = code;
+    }
+
+    @JsonValue
+    public String getCode() {
+        return code;
+    }
+
+    @JsonCreator
+    public static OperationType fromCode(String code) {
+        for (OperationType operationType : OperationType.values()) {
+            if (operationType.name().equals(code) || operationType.code.equals(code)) {
+                return operationType;
+            }
+        } return null;
     }
 }

@@ -12,13 +12,13 @@ import jakarta.validation.constraints.NotNull;
         include = JsonTypeInfo.As.PROPERTY,
         property = "field")
 @JsonSubTypes({
-        //@JsonSubTypes(Type = UUIDSearchCriteria.class, name = "id"),
+        @JsonSubTypes.Type(value = UUIDSearchCriteria.class, name = "id"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "name"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "article"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "description"),
         @JsonSubTypes.Type(value = StringSearchCriteria.class, name = "category"),
         @JsonSubTypes.Type(value = BigDecimalSearchCriteria.class, name = "price"),
-        @JsonSubTypes.Type(value = IntegerSearchCriteria.class, name = "quantity"),
+        @JsonSubTypes.Type(value = BigDecimalSearchCriteria.class, name = "quantity"),
         @JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "lastUpdateTime"),
         @JsonSubTypes.Type(value = LocalDateTimeSearchCriteria.class, name = "creationTime")
 })
@@ -33,7 +33,4 @@ public interface SearchCriteria<T> {
     OperationType getOperation();
 
     PredicateStrategy<T> getStrategy();
-
-
-
 }

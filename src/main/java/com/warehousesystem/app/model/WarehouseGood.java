@@ -45,7 +45,7 @@ public class WarehouseGood {
     private BigDecimal price;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private BigDecimal quantity;
 
     @Column(name = "last_update")
     @UpdateTimestamp

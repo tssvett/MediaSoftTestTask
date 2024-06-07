@@ -1,39 +1,27 @@
 package com.warehousesystem.app.search.criteria;
 
 import com.warehousesystem.app.search.enums.OperationType;
-
 import com.warehousesystem.app.search.strategy.PredicateStrategy;
 import com.warehousesystem.app.search.strategy.StringPredicateStrategy;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
 
-import java.util.Locale;
-
+@Data
+@Builder
 public class StringSearchCriteria implements SearchCriteria<String> {
 
-    @Getter
-    private PredicateStrategy<String> strategy = new StringPredicateStrategy();
+    private static PredicateStrategy<String> STRATEGY = new StringPredicateStrategy();
 
     private String field;
 
-    private String operation;
+    private OperationType operation;
 
-    @NotBlank
+    @NotNull
     private String value;
 
-   @Override
-    public OperationType getOperation() {
-        return OperationType.getOperation(operation);
-    }
-
     @Override
-    public String getField() {
-        return field;
+    public PredicateStrategy<String> getStrategy() {
+        return STRATEGY;
     }
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
 }

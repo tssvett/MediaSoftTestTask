@@ -4,39 +4,32 @@ import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
 import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
 import com.warehousesystem.app.search.criteria.SearchCriteria;
-import com.warehousesystem.app.search.enums.OperationType;
-import com.warehousesystem.app.search.strategy.PredicateStrategy;
+import com.warehousesystem.app.search.specification.WarehouseGoodSpecification;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import com.warehousesystem.app.utils.MappingUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.util.CastUtils.cast;
-
 @Service
+@RequiredArgsConstructor
 public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
-    @Autowired
-    private WarehouseGoodRepository warehouseGoodRepository;
-
-    @Autowired
-    private MappingUtils mappingUtils;
+    private final WarehouseGoodRepository warehouseGoodRepository;
+    private final MappingUtils mappingUtils;
 
     @Override
     public WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGoodUpdateDto) throws SQLUniqueException {
@@ -48,13 +41,12 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
         }
     }
 
-
-
     @Override
     public WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
+
         return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceById(id));
     }
 
@@ -71,9 +63,6 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     public List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
-
-        // Вычисляем смещение для пагинации
-        int offset = pageNumber * size;
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
         List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
                 .stream()
@@ -105,12 +94,10 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             warehouseGood1.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(warehouseGood1);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGood1);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
-
 
     @Override
     public WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
@@ -130,8 +117,7 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             foundedGood.setDescription(warehouseGoodUpdateDto.getDescription());
             warehouseGoodRepository.save(foundedGood);
             return mappingUtils.mapToWarehouseGoodFullDto(foundedGood);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());
         }
     }
@@ -162,28 +148,10 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     }
 
     @Override
-    public List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria<?>> criteriaList, Pageable pageable) throws Exception, EmptyGoodsException {
-        int size = pageable.getPageSize();
-        int pageNumber =pageable.getPageNumber();
+    public List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable pageable) throws Exception, EmptyGoodsException {
+        WarehouseGoodSpecification specification = new WarehouseGoodSpecification(criteriaList);
+        Page<WarehouseGood> goods = warehouseGoodRepository.findAll(specification.createSpecification(), pageable);
 
-        Specification<WarehouseGood> specification = (entity, query,cb) -> {
-            Predicate predicate = cb.conjunction();
-            for (SearchCriteria<?> criteria : criteriaList) {
-                OperationType operationType = criteria.getOperation();
-                PredicateStrategy<?> strategy = criteria.getStrategy();
-                switch (operationType){
-                    case EQUALS -> predicate = cb.and(predicate, strategy.getEqualsPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case RIGHT_LIMIT -> predicate = cb.and(predicate, strategy.getRightLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case LEFT_LIMIT -> predicate = cb.and(predicate, strategy.getLeftLimitPattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                    case LIKE -> predicate = cb.and(predicate, strategy.getLikePattern(entity.get(criteria.getField()), cast(criteria.getValue()), cb));
-                }
-            }
-            return predicate;
-        };
-
-        PageRequest pageRequest = PageRequest.of(pageNumber, size, pageable.getSort());
-        Page<WarehouseGood> goods = warehouseGoodRepository.findAll(specification, pageRequest);
         return goods.getContent().stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList());
-
     }
 }
