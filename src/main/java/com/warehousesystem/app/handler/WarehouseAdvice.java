@@ -96,7 +96,11 @@ public class WarehouseAdvice {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Response> handleException(HttpMessageNotReadableException e) {
-        Response response = new Response(e.getMessage());
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
