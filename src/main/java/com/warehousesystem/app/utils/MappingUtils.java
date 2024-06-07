@@ -3,7 +3,7 @@ package com.warehousesystem.app.utils;
 import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.entity.WarehouseGood;
+import com.warehousesystem.app.model.WarehouseGood;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,5 +72,15 @@ public class MappingUtils {
                 .build();
     }
 
+    public WarehouseGoodUpdateDto mapToWarehouseGoodUpdateDto(WarehouseGoodFullDto warehouseGoodFullDto) {
 
+        return WarehouseGoodUpdateDto.builder()
+                .name(warehouseGoodFullDto.getName())
+                .article(warehouseGoodFullDto.getArticle())
+                .description(warehouseGoodFullDto.getDescription())
+                .category(warehouseGoodFullDto.getCategory())
+                .price(warehouseGoodFullDto.getPrice())
+                .quantity(warehouseGoodFullDto.getQuantity())
+                .build();
+    }
 }

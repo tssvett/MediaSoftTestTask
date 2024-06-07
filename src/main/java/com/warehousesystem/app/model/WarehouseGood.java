@@ -1,4 +1,4 @@
-package com.warehousesystem.app.entity;
+package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.converter.DateConverter;

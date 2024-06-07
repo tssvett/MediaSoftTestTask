@@ -16,3 +16,10 @@ spring:
   h2:
     console:
       enabled: true #http://localhost:8080/h2-console
+
+app:
+  scheduling:
+    enabled: true
+    period: 120000
+    priceIncreasePercentage: 10
+    optimization: true
