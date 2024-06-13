@@ -5,8 +5,11 @@ import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
 import com.warehousesystem.app.dto.product.ProductOrderDto;
 import com.warehousesystem.app.dto.status.StatusResponseDto;
-import com.warehousesystem.app.handler.Exception.*;
-import com.warehousesystem.app.model.PreparedProduct;
+import com.warehousesystem.app.handler.exception.CustomerIdNullException;
+import com.warehousesystem.app.handler.exception.NotEnoughProductsException;
+import com.warehousesystem.app.handler.exception.UnavailableProductException;
+import com.warehousesystem.app.handler.exception.UpdateOrderException;
+import com.warehousesystem.app.handler.exception.WrongCustomerIdException;
 
 import java.util.List;
 import java.util.UUID;

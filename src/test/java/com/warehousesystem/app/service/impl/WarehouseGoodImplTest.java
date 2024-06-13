@@ -1,13 +1,12 @@
 package com.warehousesystem.app.service.impl;
 
-
+import com.warehousesystem.app.handler.exception.EmptyProductException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import com.warehousesystem.app.dto.product.ProductFullDto;
 import com.warehousesystem.app.dto.product.ProductSearchDto;
 import com.warehousesystem.app.dto.product.ProductUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyProductException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
 import com.warehousesystem.app.model.Product;
 import com.warehousesystem.app.repository.ProductRepository;
 import com.warehousesystem.app.utils.MappingUtils;

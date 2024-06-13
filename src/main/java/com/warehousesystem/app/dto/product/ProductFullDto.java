@@ -1,4 +1,4 @@
-package com.warehousesystem.app.dto.product;
+package com.warehousesystem.app.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
@@ -49,6 +49,4 @@ public class ProductFullDto {
 
     @NotNull
     private boolean isAvailable = true;
-
-
 }

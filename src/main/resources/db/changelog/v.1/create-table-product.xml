@@ -42,7 +42,7 @@
             </column>
         </createTable>
     </changeSet>
-    
+
     <changeSet id="is_available_column_add" author="tssvett">
         <addColumn tableName="product">
             <column name="is_available" type="boolean">

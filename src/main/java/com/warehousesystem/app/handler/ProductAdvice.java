@@ -1,6 +1,14 @@
 package com.warehousesystem.app.handler;
 
-import com.warehousesystem.app.handler.Exception.*;
+import com.warehousesystem.app.handler.exception.CustomerIdNullException;
+import com.warehousesystem.app.handler.exception.EmptyProductException;
+import com.warehousesystem.app.handler.exception.NotEnoughProductsException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
+import com.warehousesystem.app.handler.exception.UnavailableProductException;
+import com.warehousesystem.app.handler.exception.UpdateOrderException;
+import com.warehousesystem.app.handler.exception.WrongCustomerIdException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -150,6 +158,4 @@ public class ProductAdvice {
         ErrorDetails response = new ErrorDetails(exceptionName, exceptionClass, errorMessage, time);
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
-
-
 }

@@ -1,12 +1,12 @@
 package com.warehousesystem.app.model.compositekey;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -22,5 +22,4 @@ public class PreparedOrderPK implements Serializable {
 
     @Column(name = "order_id")
     private UUID orderId;
-
 }

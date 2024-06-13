@@ -1,6 +1,5 @@
 package com.warehousesystem.app.dto.product;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -23,5 +22,4 @@ public class ProductOrderDto {
     @Positive(message = "Quantity must me positive number")
     @NotNull(message = "Quantity cannot be empty")
     private BigDecimal quantity;
-
 }

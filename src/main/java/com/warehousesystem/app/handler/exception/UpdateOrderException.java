@@ -1,4 +1,4 @@
-package com.warehousesystem.app.handler.Exception;
+package com.warehousesystem.app.handler.exception;
 
 public class UpdateOrderException extends Throwable{
 

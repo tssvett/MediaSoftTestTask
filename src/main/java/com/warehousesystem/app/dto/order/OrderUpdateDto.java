@@ -20,9 +20,7 @@ public class OrderUpdateDto {
     @NotBlank(message = "Delivery address cannot be empty")
     private String deliveryAddress;
 
-
     @NotNull(message = "Products to order cannot be empty")
     @Valid
     private List<ProductOrderDto> products;
-
 }

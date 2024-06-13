@@ -4,25 +4,25 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-<changeSet id="create-table-order" author="tssvett">
-    <createTable tableName="order">
-        <column name="id" type="uuid">
-            <constraints nullable="false" primaryKey="true"/>
-        </column>
+    <changeSet id="create-table-order" author="tssvett">
+        <createTable tableName="order">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
 
-        <column name="customer_id" type="bigint">
-            <constraints nullable="false" foreignKeyName="order_customer_id_customer_id" references="customer(id)"/>
-        </column>
+            <column name="customer_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="order_customer_id_customer_id" references="customer(id)"/>
+            </column>
 
-        <column name="status" type="varchar(255)">
-            <constraints nullable="false"/>
-        </column>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
 
-        <column name="delivery_address" type="varchar(255)">
-            <constraints nullable="false"/>
-        </column>
+            <column name="delivery_address" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
 
-    </createTable>
-</changeSet>
+        </createTable>
+    </changeSet>
 
 </databaseChangeLog>

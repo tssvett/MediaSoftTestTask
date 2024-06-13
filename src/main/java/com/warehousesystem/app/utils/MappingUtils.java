@@ -1,6 +1,11 @@
 package com.warehousesystem.app.utils;
 
-import com.warehousesystem.app.dto.product.*;
+
+import com.warehousesystem.app.dto.ProductFullDto;
+import com.warehousesystem.app.dto.product.ProductCreateDto;
+import com.warehousesystem.app.dto.product.ProductGetResponseDto;
+import com.warehousesystem.app.dto.product.ProductOrderDto;
+import com.warehousesystem.app.dto.product.ProductUpdateDto;
 import com.warehousesystem.app.model.PreparedProduct;
 import com.warehousesystem.app.model.Product;
 import org.springframework.stereotype.Service;
@@ -71,7 +76,7 @@ public class MappingUtils {
                 .build();
     }
 
-    public ProductOrderDto mapPreparedProductToProductOrderDto(PreparedProduct preparedProduct){
+    public ProductOrderDto mapPreparedProductToProductOrderDto(PreparedProduct preparedProduct) {
 
         return ProductOrderDto.builder()
                 .id(preparedProduct.getPk().getProductId())
@@ -79,7 +84,7 @@ public class MappingUtils {
 
     }
 
-    public ProductGetResponseDto mapPreparedProductToProductGetResponseDto(PreparedProduct preparedProduct){
+    public ProductGetResponseDto mapPreparedProductToProductGetResponseDto(PreparedProduct preparedProduct) {
 
         return ProductGetResponseDto.builder()
                 .id(preparedProduct.getPk().getProductId())
@@ -87,6 +92,4 @@ public class MappingUtils {
                 .quantity(preparedProduct.getQuantity())
                 .price(preparedProduct.getPrice()).build();
     }
-
-
 }
