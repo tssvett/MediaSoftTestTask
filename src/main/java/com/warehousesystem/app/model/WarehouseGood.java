@@ -1,4 +1,4 @@
-package com.warehousesystem.app.entity;
+package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,17 +22,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class WarehouseGood {
-
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @UuidGenerator
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(name = "article", nullable = false, updatable = false, unique = true)
-    private String article;
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "article", unique = true)
+    private String article;
 
     @Column(name = "description")
     private String description;
@@ -45,7 +43,7 @@ public class WarehouseGood {
     private BigDecimal price;
 
     @Column(name = "quantity")
-    private Long quantity;
+    private BigDecimal quantity;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Transient

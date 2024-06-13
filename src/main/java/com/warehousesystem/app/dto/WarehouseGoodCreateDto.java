@@ -34,5 +34,5 @@ public class WarehouseGoodCreateDto {
 
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
-    private Long quantity;
+    private BigDecimal quantity;
 }

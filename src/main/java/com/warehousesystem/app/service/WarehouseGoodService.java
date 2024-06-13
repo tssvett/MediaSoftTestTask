@@ -4,10 +4,12 @@ import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
-import com.warehousesystem.app.handler.Exception.EmptyGoodsException;
-import com.warehousesystem.app.handler.Exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.Exception.SQLUniqueException;
-import com.warehousesystem.app.handler.Exception.NotFoundByIdException;
+import com.warehousesystem.app.handler.exception.EmptyGoodsException;
+import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
+import com.warehousesystem.app.handler.exception.SQLUniqueException;
+import com.warehousesystem.app.handler.exception.NotFoundByIdException;
+import com.warehousesystem.app.search.criteria.SearchCriteria;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -74,4 +76,5 @@ public interface WarehouseGoodService {
      */
     void deleteAll() throws NotFoundByArticleException, EmptyGoodsException;
 
+    List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable criteria) throws Exception, EmptyGoodsException;
 }
