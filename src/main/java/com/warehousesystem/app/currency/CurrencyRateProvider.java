@@ -2,32 +2,26 @@ package com.warehousesystem.app.currency;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warehousesystem.app.enums.CurrencyType;
+import com.warehousesystem.app.interaction.currencyservice.CurrencyServiceClient;
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-@Component
-@Slf4j
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@Component
+@Slf4j
+@RequiredArgsConstructor
 public class CurrencyRateProvider {
-
-    @Autowired
-    private CurrencyServiceClient currencyServiceClient;
-
+    private final CurrencyServiceClient currencyServiceClient;
     private CurrencyType currencyType;
-
 
     public BigDecimal getCurrencyValue() {
         return Optional.ofNullable(getCurrencyValueFromService()).orElseGet(this::getCurrencyValueFromFile);
@@ -46,6 +40,7 @@ public class CurrencyRateProvider {
             throw new RuntimeException(e);
         }
         log.info("Get exchange rate from file");
+
         return getCurrencyValueFromCurrencyType(currencyRate);
     }
 

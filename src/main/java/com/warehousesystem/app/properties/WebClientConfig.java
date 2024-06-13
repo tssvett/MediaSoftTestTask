@@ -3,7 +3,7 @@ package com.warehousesystem.app.properties;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -14,11 +14,9 @@ import reactor.netty.tcp.TcpClient;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebClientConfig {
-
-    @Autowired
-    private CurrencyConfig currencyConfig;
-
+    private final RestProperties restProperties;
     public static final int TIMEOUT = 2000;
 
     @Bean
@@ -32,7 +30,7 @@ public class WebClientConfig {
                 });
 
         return WebClient.builder()
-                .baseUrl(currencyConfig.getHost())
+                .baseUrl(restProperties.getHost())
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
                 .build();
     }

@@ -7,15 +7,13 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @ConfigurationProperties(prefix = "currency-service")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CurrencyConfig {
+public class RestProperties {
 
     private String host;
     private String mock;

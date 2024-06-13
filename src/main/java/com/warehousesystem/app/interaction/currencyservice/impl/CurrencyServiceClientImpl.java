@@ -1,33 +1,24 @@
-package com.warehousesystem.app.currency.impl;
+package com.warehousesystem.app.interaction.currencyservice.impl;
 
 import com.warehousesystem.app.currency.CurrencyRate;
-import com.warehousesystem.app.currency.CurrencyServiceClient;
-import com.warehousesystem.app.properties.CurrencyConfig;
+import com.warehousesystem.app.interaction.currencyservice.CurrencyServiceClient;
+import com.warehousesystem.app.properties.RestProperties;
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
 
-@Primary
-@Service
-@AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class CurrencyServiceClientImpl implements CurrencyServiceClient {
-
-    @Autowired
-    private WebClient webClient;
-
-    @Autowired
-    private CurrencyConfig currencyConfig;
+    private final WebClient webClient;
+    private final RestProperties restProperties;
 
     @Cacheable(value = "currency-cache", unless = "#result == null")
     @Override
@@ -36,7 +27,7 @@ public class CurrencyServiceClientImpl implements CurrencyServiceClient {
             //Функция выполняет retry 3 раза
             return webClient
                     .get()
-                    .uri(currencyConfig.getHost() + currencyConfig.getMethods().getGetCurrency())
+                    .uri(restProperties.getMethods().getGetCurrency())
                     .retrieve()
                     .bodyToMono(CurrencyRate.class)
                     .retryWhen(Retry.fixedDelay(2, Duration.ofMillis(300)))
@@ -44,6 +35,7 @@ public class CurrencyServiceClientImpl implements CurrencyServiceClient {
                     .block();
         } catch (Exception e) {
             log.error("Error with currency service: " + e.getMessage());
+
             return null;
         }
     }

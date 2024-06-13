@@ -22,8 +22,10 @@ app:
     priceIncreasePercentage: 10
     optimization: true
 
-currency-service:
-  host: http://localhost:8070
-  methods:
-    get-currency: /currency
-  mock: true
+rest:
+  currency-service:
+    host: http://localhost:8070
+    methods:
+      get-currency: /currency
+    mock:
+      enabled: true
