@@ -1,5 +1,6 @@
 package com.warehousesystem.app.service.impl;
 
+import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
@@ -32,9 +33,9 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     private final MappingUtils mappingUtils;
 
     @Override
-    public WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGoodUpdateDto) throws SQLUniqueException {
+    public WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGoodCreateDto) throws SQLUniqueException {
         try {
-            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodUpdateDto);
+            WarehouseGood warehouseGood = mappingUtils.mapUpdateToWarehouseGood(warehouseGoodCreateDto);
             return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.save(warehouseGood));
         } catch (Exception e) {
             throw new SQLUniqueException(e.getMessage());

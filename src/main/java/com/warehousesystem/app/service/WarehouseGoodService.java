@@ -1,5 +1,6 @@
 package com.warehousesystem.app.service;
 
+import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
@@ -19,7 +20,7 @@ public interface WarehouseGoodService {
      * Создает новый товар на складе
      * @param warehouseGood - товар для создания
      */
-    WarehouseGoodFullDto create(WarehouseGoodUpdateDto warehouseGood) throws SQLUniqueException;
+    WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGood) throws SQLUniqueException;
 
 
     /**

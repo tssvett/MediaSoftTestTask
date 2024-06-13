@@ -1,5 +1,6 @@
 package com.warehousesystem.app.controller;
 
+import com.warehousesystem.app.dto.WarehouseGoodCreateDto;
 import com.warehousesystem.app.dto.WarehouseGoodFullDto;
 import com.warehousesystem.app.dto.WarehouseGoodSearchDto;
 import com.warehousesystem.app.dto.WarehouseGoodUpdateDto;
@@ -46,7 +47,7 @@ public class WarehouseController {
     }
 
     @PostMapping("/goods")
-    public ResponseEntity<WarehouseGoodFullDto> createGood(@Valid @RequestBody WarehouseGoodUpdateDto warehouseGood) throws SQLUniqueException {
+    public ResponseEntity<WarehouseGoodFullDto> createGood(@Valid @RequestBody WarehouseGoodCreateDto warehouseGood) throws SQLUniqueException {
         WarehouseGoodFullDto good = warehouseGoodService.create(warehouseGood);
         return new ResponseEntity<>(good, HttpStatus.CREATED);
     }
