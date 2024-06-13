@@ -21,3 +21,11 @@ app:
     period: 120000
     priceIncreasePercentage: 10
     optimization: true
+
+rest:
+  currency-service:
+    host: http://localhost:8070
+    methods:
+      get-currency: /currency
+    mock:
+      enabled: true

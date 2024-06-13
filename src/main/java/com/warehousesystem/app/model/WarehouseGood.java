@@ -1,7 +1,9 @@
 package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.warehousesystem.app.converter.DateConverter;
+import com.warehousesystem.app.enums.CurrencyType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -42,6 +44,10 @@ public class WarehouseGood {
 
     @Column(name = "quantity")
     private BigDecimal quantity;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    private CurrencyType currency;
 
     @Column(name = "last_update")
     @UpdateTimestamp
