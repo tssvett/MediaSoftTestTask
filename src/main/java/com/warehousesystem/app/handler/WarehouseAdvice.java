@@ -7,6 +7,7 @@ import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -85,6 +86,16 @@ public class WarehouseAdvice {
 
     @ExceptionHandler(NotFoundByArticleException.class)
     public ResponseEntity<Response> handleException(NotFoundByArticleException e) {
+        LocalDateTime time = LocalDateTime.now();
+        List<String> errorMessage = List.of(e.getMessage());
+        String exceptionName = e.getClass().getSimpleName();
+        String exceptionClass = e.getStackTrace()[0].getClassName();
+        Response response = new Response(exceptionName, exceptionClass, errorMessage, time);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Response> handleException(HttpMessageNotReadableException e) {
         LocalDateTime time = LocalDateTime.now();
         List<String> errorMessage = List.of(e.getMessage());
         String exceptionName = e.getClass().getSimpleName();

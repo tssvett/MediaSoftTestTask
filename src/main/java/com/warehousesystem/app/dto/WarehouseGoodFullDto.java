@@ -39,13 +39,11 @@ public class WarehouseGoodFullDto {
 
     @NotNull
     @Min(value = 1, message = "Quantity cannot be negative or zero")
-    private Long quantity;
+    private BigDecimal quantity;
 
     @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     private LocalDateTime lastUpdateTime;
 
     @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
     private LocalDateTime creationTime;
-
-
 }

@@ -10,10 +10,14 @@ import com.warehousesystem.app.handler.exception.NotFoundByIdException;
 import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import com.warehousesystem.app.model.WarehouseGood;
 import com.warehousesystem.app.repository.WarehouseGoodRepository;
+import com.warehousesystem.app.search.criteria.SearchCriteria;
+import com.warehousesystem.app.search.specification.WarehouseGoodSpecification;
 import com.warehousesystem.app.service.WarehouseGoodService;
 import com.warehousesystem.app.utils.MappingUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +26,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class WarehouseGoodServiceImpl implements WarehouseGoodService {
 
-    @Autowired
-    private WarehouseGoodRepository warehouseGoodRepository;
-
-    @Autowired
-    private MappingUtils mappingUtils;
+    private final WarehouseGoodRepository warehouseGoodRepository;
+    private final MappingUtils mappingUtils;
 
     @Override
     public WarehouseGoodFullDto create(WarehouseGoodCreateDto warehouseGoodCreateDto) throws SQLUniqueException {
@@ -40,12 +42,12 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
         }
     }
 
-
     @Override
     public WarehouseGoodFullDto readById(UUID id) throws NotFoundByIdException {
         if (!warehouseGoodRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
+
         return mappingUtils.mapToWarehouseGoodFullDto(warehouseGoodRepository.getReferenceById(id));
     }
 
@@ -62,7 +64,6 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
     public List<WarehouseGoodFullDto> readAll(WarehouseGoodSearchDto warehouseGoodSearchDto) throws EmptyGoodsException {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
-
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
         List<WarehouseGoodFullDto> goods = warehouseGoodRepository.findAll(request)
                 .stream()
@@ -98,7 +99,6 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             throw new SQLUniqueException(e.getMessage());
         }
     }
-
 
     @Override
     public WarehouseGoodFullDto updateByArticle(WarehouseGoodUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
@@ -146,5 +146,13 @@ public class WarehouseGoodServiceImpl implements WarehouseGoodService {
             throw new EmptyGoodsException();
         }
         warehouseGoodRepository.deleteAll();
+    }
+
+    @Override
+    public List<WarehouseGoodFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable pageable) throws Exception, EmptyGoodsException {
+        WarehouseGoodSpecification specification = new WarehouseGoodSpecification(criteriaList);
+        Page<WarehouseGood> goods = warehouseGoodRepository.findAll(specification.createSpecification(), pageable);
+
+        return goods.getContent().stream().map(mappingUtils::mapToWarehouseGoodFullDto).collect(Collectors.toList());
     }
 }
