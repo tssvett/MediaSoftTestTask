@@ -20,7 +20,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -69,5 +69,5 @@ public class Product {
     private LocalDateTime creationTime;
 
     @OneToMany(mappedBy = "product")
-    private Set<PreparedProduct> preparedProducts;
+    private List<PreparedProduct> preparedProducts;
 }

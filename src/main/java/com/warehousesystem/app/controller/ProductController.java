@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,64 +37,64 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+
     @GetMapping("/goods")
-    public ResponseEntity<List<ProductFullDto>> getGoodsAll(@Valid @RequestBody ProductSearchDto productSearchDto) throws EmptyProductException {
-        final List<ProductFullDto> productFullDtoList = productService.readAll(productSearchDto);
-        return new ResponseEntity<>(productFullDtoList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductFullDto> getGoodsAll(@Valid @RequestBody ProductSearchDto productSearchDto) throws EmptyProductException {
+        return productService.readAll(productSearchDto);
     }
 
     @PostMapping("/goods")
-    public ResponseEntity<ProductFullDto> createGood(@Valid @RequestBody ProductCreateDto productCreateDto) throws SQLUniqueException {
-        ProductFullDto productFullDto = productService.create(productCreateDto);
-        return new ResponseEntity<>(productFullDto, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductFullDto createGood(@Valid @RequestBody ProductCreateDto productCreateDto) throws SQLUniqueException {
+        return productService.create(productCreateDto);
     }
 
     @DeleteMapping("/goods")
-    public ResponseEntity<ProductFullDto> deleteAllGoods() throws EmptyProductException, NotFoundByArticleException {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAllGoods() throws EmptyProductException, NotFoundByArticleException {
         productService.deleteAll();
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @GetMapping("/goodsById")
-    public ResponseEntity<ProductFullDto> getGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
-        final ProductFullDto productFullDto = productService.readById(id);
-        return new ResponseEntity<>(productFullDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public ProductFullDto getGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+        return productService.readById(id);
     }
 
     @Transactional
     @PutMapping("/goodsById")
-    public ResponseEntity<ProductFullDto> updateGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id,
-                                                         @Valid @RequestBody ProductUpdateDto productUpdateDto) throws NotFoundByIdException, SQLUniqueException {
-        ProductFullDto productFullDto = productService.updateById(productUpdateDto, id);
-        return new ResponseEntity<>(productFullDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public ProductFullDto updateGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id,
+                                         @Valid @RequestBody ProductUpdateDto productUpdateDto) throws NotFoundByIdException, SQLUniqueException {
+        return productService.updateById(productUpdateDto, id);
     }
 
 
     @Transactional
     @DeleteMapping("/goodsById")
-    public ResponseEntity<ProductFullDto> deleteGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteGoodById(@RequestParam(value = "id") @Valid @PathVariable UUID id) throws NotFoundByIdException {
         productService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/goodsByArticle")
-    public ResponseEntity<ProductFullDto> getGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String article) throws NotFoundByArticleException {
-        final ProductFullDto productFullDto = productService.readByArticle(article);
-        return new ResponseEntity<>(productFullDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public ProductFullDto getGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String article) throws NotFoundByArticleException {
+        return productService.readByArticle(article);
     }
 
     @Transactional
     @PutMapping("/goodsByArticle")
-    public ResponseEntity<ProductFullDto> updateGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name, @RequestBody @Valid ProductUpdateDto productUpdateDto) throws NotFoundByArticleException, SQLUniqueException {
-        ProductFullDto good = productService.updateByArticle(productUpdateDto, name);
-        return new ResponseEntity<>(good, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public ProductFullDto updateGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name, @RequestBody @Valid ProductUpdateDto productUpdateDto) throws NotFoundByArticleException, SQLUniqueException {
+        return productService.updateByArticle(productUpdateDto, name);
     }
 
     @Transactional
     @DeleteMapping("/goodsByArticle")
-    public ResponseEntity<ProductFullDto> deleteGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name) throws NotFoundByArticleException {
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteGoodByArticle(@RequestParam(value = "article") @Valid @PathVariable String name) throws NotFoundByArticleException {
         productService.deleteByArticle(name);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -5,25 +5,19 @@ import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
 import com.warehousesystem.app.dto.product.ProductOrderDto;
 import com.warehousesystem.app.dto.status.StatusResponseDto;
-import com.warehousesystem.app.handler.exception.CustomerIdNullException;
-import com.warehousesystem.app.handler.exception.NotEnoughProductsException;
-import com.warehousesystem.app.handler.exception.UnavailableProductException;
-import com.warehousesystem.app.handler.exception.UpdateOrderException;
-import com.warehousesystem.app.handler.exception.WrongCustomerIdException;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
 
-    UUID create(OrderCreateDto orderCreateDto, Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException;
+    UUID createOrder(OrderCreateDto orderCreateDto, Long customerId);
 
-    OrderUpdateDto update(UUID orderId, List<ProductOrderDto> products, Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException, UpdateOrderException, WrongCustomerIdException;
+    OrderUpdateDto updateOrderById(UUID orderId, List<ProductOrderDto> products, Long customerId);
 
-    OrderGetResponseDto get(UUID orderId, Long customerId) throws CustomerIdNullException, WrongCustomerIdException;
+    OrderGetResponseDto getOrderById(UUID orderId, Long customerId);
 
-    UUID delete(UUID orderId, Long customerId) throws CustomerIdNullException, WrongCustomerIdException, UpdateOrderException;
+    UUID deleteOrderById(UUID orderId, Long customerId);
 
-    StatusResponseDto setStatus(UUID orderId, StatusResponseDto status, Long customerId) throws CustomerIdNullException, WrongCustomerIdException;
-
+    StatusResponseDto setOrderStatusById(UUID orderId, StatusResponseDto status, Long customerId);
 }

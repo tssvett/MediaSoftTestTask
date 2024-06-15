@@ -4,10 +4,6 @@ import com.warehousesystem.app.dto.ProductFullDto;
 import com.warehousesystem.app.dto.product.ProductCreateDto;
 import com.warehousesystem.app.dto.product.ProductSearchDto;
 import com.warehousesystem.app.dto.product.ProductUpdateDto;
-import com.warehousesystem.app.handler.exception.EmptyProductException;
-import com.warehousesystem.app.handler.exception.NotFoundByArticleException;
-import com.warehousesystem.app.handler.exception.NotFoundByIdException;
-import com.warehousesystem.app.handler.exception.SQLUniqueException;
 import com.warehousesystem.app.search.criteria.SearchCriteria;
 import org.springframework.data.domain.Pageable;
 
@@ -21,7 +17,7 @@ public interface ProductService {
      *
      * @param warehouseGood - товар для создания
      */
-    ProductFullDto create(ProductCreateDto warehouseGood) throws SQLUniqueException;
+    ProductFullDto create(ProductCreateDto warehouseGood);
 
 
     /**
@@ -30,7 +26,7 @@ public interface ProductService {
      * @param id
      * @return - объект товара с заданным артикулом
      */
-    ProductFullDto readById(UUID id) throws NotFoundByIdException;
+    ProductFullDto readById(UUID id);
 
     /**
      * Возвращает товар на складе по его уникальному имени
@@ -38,7 +34,7 @@ public interface ProductService {
      * @param article
      * @return - список товаров с заданным именем
      */
-    ProductFullDto readByArticle(String article) throws NotFoundByArticleException;
+    ProductFullDto readByArticle(String article);
 
     /**
      * Обновляет товар на складе по заданному артикулу
@@ -51,9 +47,9 @@ public interface ProductService {
      *
      * @return - список
      */
-    List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException;
+    List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto);
 
-    ProductFullDto updateById(ProductUpdateDto warehouseGood, UUID id) throws NotFoundByIdException, SQLUniqueException;
+    ProductFullDto updateById(ProductUpdateDto warehouseGood, UUID id);
 
     /**
      * Обновляет товар на складе по заданному имени
@@ -61,26 +57,26 @@ public interface ProductService {
      * @param warehouseGood
      * @param article
      */
-    ProductFullDto updateByArticle(ProductUpdateDto warehouseGood, String article) throws NotFoundByArticleException, SQLUniqueException;
+    ProductFullDto updateByArticle(ProductUpdateDto warehouseGood, String article);
 
     /**
      * Удаляет товар на складе по заданному артикулу
      *
      * @param id
      */
-    void deleteById(UUID id) throws NotFoundByIdException;
+    void deleteById(UUID id);
 
     /**
      * Удаляет товар на складе по заданному артикулу
      *
      * @param name
      */
-    void deleteByArticle(String name) throws NotFoundByArticleException;
+    void deleteByArticle(String name);
 
     /**
      * Удаляет все....
      */
-    void deleteAll() throws NotFoundByArticleException, EmptyProductException;
+    void deleteAll();
 
-    List<ProductFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable criteria) throws Exception, EmptyProductException;
+    List<ProductFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable criteria);
 }

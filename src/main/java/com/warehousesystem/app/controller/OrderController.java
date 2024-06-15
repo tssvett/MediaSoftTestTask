@@ -14,7 +14,6 @@ import com.warehousesystem.app.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,34 +37,34 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/order")
-    public ResponseEntity<UUID> createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UnavailableProductException, CustomerIdNullException, NotEnoughProductsException {
-        UUID orderId = orderService.create(orderCreateDto, customerId);
-        return new ResponseEntity<>(orderId, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UUID createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UnavailableProductException, CustomerIdNullException, NotEnoughProductsException {
+        return orderService.createOrder(orderCreateDto, customerId);
     }
 
     @PatchMapping("/order/{orderId}")
-    public ResponseEntity<OrderUpdateDto> updateOrder(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody List<ProductOrderDto> products,
-                                                      @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UpdateOrderException, UnavailableProductException, CustomerIdNullException, NotEnoughProductsException, WrongCustomerIdException {
-        OrderUpdateDto orderUpdateDto = orderService.update(orderId, products, customerId);
-        return new ResponseEntity<>(orderUpdateDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public OrderUpdateDto updateOrder(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody List<ProductOrderDto> products,
+                                      @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UpdateOrderException, UnavailableProductException, CustomerIdNullException, NotEnoughProductsException, WrongCustomerIdException {
+        return orderService.updateOrderById(orderId, products, customerId);
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<OrderGetResponseDto> getOrder(@PathVariable("orderId") UUID orderId, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
-        OrderGetResponseDto orderGetResponseDto = orderService.get(orderId, customerId);
-        return new ResponseEntity<>(orderGetResponseDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public OrderGetResponseDto getOrder(@PathVariable("orderId") UUID orderId, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
+        return orderService.getOrderById(orderId, customerId);
     }
 
     @DeleteMapping("/order/{orderId}")
-    public ResponseEntity<UUID> deleteOrder(@PathVariable("orderId") UUID orderId, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UpdateOrderException, CustomerIdNullException, WrongCustomerIdException {
-        UUID deletedOrderId = orderService.delete(orderId, customerId);
-        return new ResponseEntity<>(deletedOrderId, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteOrder(@PathVariable("orderId") UUID orderId, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws UpdateOrderException, CustomerIdNullException, WrongCustomerIdException {
+        orderService.deleteOrderById(orderId, customerId);
     }
 
     @PatchMapping("/order/{orderId}/status")
-    public ResponseEntity<StatusResponseDto> updateOrderStatus(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody StatusResponseDto status, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
-        StatusResponseDto statusResponseDto = orderService.setStatus(orderId, status, customerId);
-        return new ResponseEntity<>(statusResponseDto, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public StatusResponseDto updateOrderStatus(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody StatusResponseDto status, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
+        return orderService.setOrderStatusById(orderId, status, customerId);
     }
 }
 

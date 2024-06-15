@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final MappingUtils mappingUtils;
 
     @Override
-    public ProductFullDto create(ProductCreateDto productCreateDto) throws SQLUniqueException {
+    public ProductFullDto create(ProductCreateDto productCreateDto) {
         try {
             Product warehouseGood = mappingUtils.mapUpdateToWarehouseGood(productCreateDto);
 
@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductFullDto readById(UUID id) throws NotFoundByIdException {
+    public ProductFullDto readById(UUID id) {
         if (!productRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductFullDto readByArticle(String article) throws NotFoundByArticleException {
+    public ProductFullDto readByArticle(String article) {
         if (!productRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException();
         }
@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto) throws EmptyProductException {
+    public List<ProductFullDto> readAll(ProductSearchDto warehouseGoodSearchDto) {
         int size = warehouseGoodSearchDto.getSize();
         int pageNumber = warehouseGoodSearchDto.getPageNumber();
         PageRequest request = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "price"));
@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductFullDto updateById(ProductUpdateDto warehouseGoodUpdateDto, UUID id) throws NotFoundByIdException, SQLUniqueException {
+    public ProductFullDto updateById(ProductUpdateDto warehouseGoodUpdateDto, UUID id) {
         if (!productRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
@@ -104,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductFullDto updateByArticle(ProductUpdateDto warehouseGoodUpdateDto, String article) throws NotFoundByArticleException, SQLUniqueException {
+    public ProductFullDto updateByArticle(ProductUpdateDto warehouseGoodUpdateDto, String article) {
         if (!productRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException();
         }
@@ -128,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(UUID id) throws NotFoundByIdException {
+    public void deleteById(UUID id) {
         if (!productRepository.existsById(id)) {
             throw new NotFoundByIdException();
         }
@@ -136,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteByArticle(String article) throws NotFoundByArticleException {
+    public void deleteByArticle(String article) {
         if (!productRepository.existsByArticle(article)) {
             throw new NotFoundByArticleException();
         }
@@ -153,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable pageable) throws Exception, EmptyProductException {
+    public List<ProductFullDto> readSortedGoods(List<SearchCriteria> criteriaList, Pageable pageable) {
         ProductSpecification specification = new ProductSpecification(criteriaList);
         Page<Product> goods = productRepository.findAll(specification.createSpecification(), pageable);
 

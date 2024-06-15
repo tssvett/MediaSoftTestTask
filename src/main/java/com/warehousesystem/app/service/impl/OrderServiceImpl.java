@@ -8,6 +8,7 @@ import com.warehousesystem.app.dto.status.StatusResponseDto;
 import com.warehousesystem.app.enums.Status;
 import com.warehousesystem.app.handler.exception.CustomerIdNullException;
 import com.warehousesystem.app.handler.exception.NotEnoughProductsException;
+import com.warehousesystem.app.handler.exception.OrderIdNullException;
 import com.warehousesystem.app.handler.exception.UnavailableProductException;
 import com.warehousesystem.app.handler.exception.UpdateOrderException;
 import com.warehousesystem.app.handler.exception.WrongCustomerIdException;
@@ -27,9 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,28 +45,30 @@ public class OrderServiceImpl implements OrderService {
     private final MappingUtils mappingUtils;
 
     @Override
-    public UUID create(OrderCreateDto orderCreateDto, Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException {
-        if (customerId == null) {
-            throw new CustomerIdNullException("CustomerId is null!");
-        }
+    public UUID createOrder(OrderCreateDto orderCreateDto, Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerIdNullException("CustomerId Not found!"));
-        Order order = Order.builder().customerId(customer).deliveryAddress(orderCreateDto.getDeliveryAddress()).status(Status.CREATED).build();
-        List<PreparedProduct> preparedProducts = new ArrayList<>();
-        for (ProductOrderDto productOrderDto : orderCreateDto.getProducts()) {
-            Product product = productRepository.findById(productOrderDto.getId()).orElseThrow(() -> new UnavailableProductException("Product Not found!"));
-            log.info("Product {}", product.getId());
-            if (!product.isAvailable()) {
-                throw new UnavailableProductException("Product with id " + productOrderDto.getId() + " is not available");
-            }
-            if (product.getQuantity().compareTo(productOrderDto.getQuantity()) < 0) {
-                throw new NotEnoughProductsException("Product with id " + productOrderDto.getId() + " are not in stock in such quantities...");
-            }
-            PreparedProduct preparedProduct = PreparedProduct.builder().pk(new PreparedOrderPK(product.getId(), order.getId())).order(order).product(product).price(product.getPrice()).quantity(productOrderDto.getQuantity()).build();
-            preparedProducts.add(preparedProduct);
-            product.setQuantity(product.getQuantity().subtract(productOrderDto.getQuantity()));
-            productRepository.save(product);
-            log.info("Prepared product {}", preparedProduct.getPrice().toString());
-        }
+
+        Order order = Order.builder()
+                .customerId(customer)
+                .deliveryAddress(orderCreateDto.getDeliveryAddress())
+                .status(Status.CREATED)
+                .build();
+
+        List<UUID> productIds = orderCreateDto.getProducts()
+                .stream()
+                .map(ProductOrderDto::getId)
+                .toList();
+
+        Map<UUID, Product> productsMap = productRepository.findAllById(productIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        List<PreparedProduct> preparedProducts = orderCreateDto.getProducts()
+                .stream()
+                .map((productOrderDto -> createPreparedProduct(productOrderDto, productsMap, order)))
+                .toList();
+
+        order.setPreparedProducts(preparedProducts);
         Order savedOrder = orderRepository.save(order);
         preparedOrderRepository.saveAll(preparedProducts);
         log.info("Order created {}", savedOrder);
@@ -72,78 +77,73 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder.getId();
     }
 
-
     @Override
-    public OrderUpdateDto update(UUID orderId, List<ProductOrderDto> products, Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException, UpdateOrderException, WrongCustomerIdException {
-
+    public OrderUpdateDto updateOrderById(UUID orderId, List<ProductOrderDto> products, Long customerId) {
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderIdNullException("Order Not found!"));
         if (order.getCustomerId().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
         }
         if (!order.getStatus().equals(Status.CREATED)) {
             throw new UpdateOrderException("Order with id " + orderId + " is not created because status is not CREATED");
         }
+        List<UUID> productIds = products
+                .stream()
+                .map(ProductOrderDto::getId)
+                .toList();
+        Map<UUID, Product> productsMap = productRepository.findAllById(productIds).stream().collect(Collectors.toMap(Product::getId, Function.identity()));
         List<PreparedProduct> preparedProducts = preparedOrderRepository.findAllByOrderId(orderId);
-        log.info("Prepared products {}", preparedProducts.stream().toList());
-        for (ProductOrderDto productOrderDto : products) {
-            Product product = productRepository.findById(productOrderDto.getId()).orElseThrow(() -> new UnavailableProductException("Product Not found!"));
-            log.info("Product {}", product.getId());
-            if (!product.isAvailable()) {
-                throw new UnavailableProductException("Product with id " + productOrderDto.getId() + " is not available");
-            }
-            if (product.getQuantity().compareTo(productOrderDto.getQuantity()) < 0) {
-                throw new NotEnoughProductsException("Product with id " + productOrderDto.getId() + " are not in stock in such quantities...");
-            }
-            if (preparedProducts.stream().noneMatch(preparedProduct -> preparedProduct.getProduct().getId().equals(product.getId()))) {
-                PreparedProduct preparedProduct = PreparedProduct.builder().pk(new PreparedOrderPK(product.getId(), order.getId())).order(order).product(product).price(product.getPrice()).quantity(productOrderDto.getQuantity()).build();
-                preparedProducts.add(preparedProduct);
-            }
-            product.setQuantity(product.getQuantity().subtract(productOrderDto.getQuantity()));
-            productRepository.save(product);
-        }
+        List<ProductOrderDto> updatedPreparedProducts = products
+                .stream()
+                .map(productOrderDto -> updatePreparedProduct(preparedProducts, productOrderDto, productsMap, order))
+                .toList();
+        log.info("Updated Prepared products {}", updatedPreparedProducts);
         preparedOrderRepository.saveAll(preparedProducts);
-
-        return OrderUpdateDto.builder().deliveryAddress(order.getDeliveryAddress()).products(preparedProducts.stream().map(mappingUtils::mapPreparedProductToProductOrderDto).toList()).build();
+        return OrderUpdateDto.builder()
+                .deliveryAddress(order.getDeliveryAddress())
+                .products(preparedProducts.stream()
+                        .map(mappingUtils::mapPreparedProductToProductOrderDto)
+                        .toList())
+                .build();
     }
 
     @Override
-    public OrderGetResponseDto get(UUID orderId, Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
-
+    public OrderGetResponseDto getOrderById(UUID orderId, Long customerId) {
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
+        Order order = orderRepository.findByIdPreparedProducts(orderId).orElseThrow(() -> new OrderIdNullException("Order Not found!"));
         if (order.getCustomerId().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
         }
-        List<PreparedProduct> preparedProducts = preparedOrderRepository.findAllByOrderId(orderId);
-
-        return OrderGetResponseDto.builder().id(order.getId()).products(preparedProducts.stream().map(mappingUtils::mapPreparedProductToProductGetResponseDto).toList()).totalPrice(calculateTotalPrice(preparedProducts)).build();
+        return OrderGetResponseDto.builder()
+                .id(order.getId())
+                .products(order.getPreparedProducts()
+                        .stream()
+                        .map(mappingUtils::mapPreparedProductToProductGetResponseDto)
+                        .toList())
+                .totalPrice(calculateTotalPrice(order.getPreparedProducts()))
+                .build();
     }
 
     @Override
-    public UUID delete(UUID orderId, Long customerId) throws CustomerIdNullException, WrongCustomerIdException, UpdateOrderException {
-
+    public UUID deleteOrderById(UUID orderId, Long customerId) {
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
-
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
-
+        Order order = orderRepository.findByIdPreparedProducts(orderId).orElseThrow(() -> new OrderIdNullException("Order Not found!"));
         if (order.getCustomerId().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
-
         }
         if (!order.getStatus().equals(Status.CREATED)) {
             throw new UpdateOrderException("Cannot delete order with id " + orderId);
         }
-
         for (PreparedProduct preparedProduct : order.getPreparedProducts()) {
             Product product = preparedProduct.getProduct();
             product.setQuantity(product.getQuantity().add(preparedProduct.getQuantity()));
+            product.setAvailable(false);
             productRepository.save(product);
         }
         order.setStatus(Status.CANCELLED);
@@ -153,14 +153,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public StatusResponseDto setStatus(UUID orderId, StatusResponseDto status, Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
-
+    public StatusResponseDto setOrderStatusById(UUID orderId, StatusResponseDto status, Long customerId) {
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
-
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
-
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new OrderIdNullException("Order Not found!"));
         if (order.getCustomerId().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
         }
@@ -171,12 +168,57 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BigDecimal calculateTotalPrice(List<PreparedProduct> preparedProducts) {
-
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (PreparedProduct preparedProduct : preparedProducts) {
             totalPrice = totalPrice.add(preparedProduct.getPrice().multiply(preparedProduct.getQuantity()));
         }
 
         return totalPrice;
+    }
+
+    private PreparedProduct createPreparedProduct(ProductOrderDto productOrderDto, Map<UUID, Product> productsMap, Order order) {
+        Product product = productsMap.get(productOrderDto.getId());
+        checkProductForValidity(product, productOrderDto);
+        product.setQuantity(product.getQuantity().subtract(product.getQuantity()));
+        productRepository.save(product);
+
+        return PreparedProduct.builder()
+                .pk(new PreparedOrderPK(product.getId(), order.getId()))
+                .order(order)
+                .product(product)
+                .price(product.getPrice())
+                .quantity(productOrderDto.getQuantity())
+                .build();
+    }
+
+    private ProductOrderDto updatePreparedProduct(List<PreparedProduct> preparedProducts, ProductOrderDto productOrderDto,
+                                                  Map<UUID, Product> productsMap, Order order) {
+        Product product = productsMap.get(productOrderDto.getId());
+        checkProductForValidity(product, productOrderDto);
+        if (preparedProducts.stream().noneMatch(preparedProduct -> preparedProduct.getProduct().getId().equals(product.getId()))) {
+            PreparedProduct preparedProduct = PreparedProduct.builder()
+                    .pk(new PreparedOrderPK(product.getId(), order.getId()))
+                    .order(order)
+                    .product(product)
+                    .price(product.getPrice())
+                    .quantity(productOrderDto.getQuantity())
+                    .build();
+            preparedProducts.add(preparedProduct);
+        }
+        product.setQuantity(product.getQuantity().subtract(productOrderDto.getQuantity()));
+        productRepository.save(product);
+
+        return productOrderDto;
+    }
+    private void checkProductForValidity(Product product, ProductOrderDto productOrderDto) {
+        if (product == null) {
+            throw new UnavailableProductException("Product with id " + productOrderDto.getId() + " is not available");
+        }
+        if (product.getQuantity().compareTo(productOrderDto.getQuantity()) < 0) {
+            throw new NotEnoughProductsException("Product with id " + productOrderDto.getId() + " are not in stock in such quantities...");
+        }
+        if (!product.isAvailable()) {
+            throw new UnavailableProductException("Product with id " + product.getId() + " is not available");
+        }
     }
 }
