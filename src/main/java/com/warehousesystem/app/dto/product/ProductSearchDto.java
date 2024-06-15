@@ -1,4 +1,4 @@
-package com.warehousesystem.app.dto;
+package com.warehousesystem.app.dto.product;
 
 
 import jakarta.validation.constraints.Positive;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WarehouseGoodSearchDto {
+public class ProductSearchDto {
 
     @Positive
     @Builder.Default

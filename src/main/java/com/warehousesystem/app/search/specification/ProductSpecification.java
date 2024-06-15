@@ -1,6 +1,6 @@
 package com.warehousesystem.app.search.specification;
 
-import com.warehousesystem.app.model.WarehouseGood;
+import com.warehousesystem.app.model.Product;
 import com.warehousesystem.app.search.criteria.SearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,19 +11,19 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class WarehouseGoodSpecification {
+public class ProductSpecification {
 
     private final List<SearchCriteria> criteriaList;
 
-    public Specification<WarehouseGood> createSpecification() {
-        List<Specification<WarehouseGood>> specs = criteriaList.stream()
+    public Specification<Product> createSpecification() {
+        List<Specification<Product>> specs = criteriaList.stream()
                 .map(this::getSpecification)
                 .collect(Collectors.toList());
 
         return Specification.allOf(specs);
     }
 
-    private Specification<WarehouseGood> getSpecification(SearchCriteria criteria) {
+    private Specification<Product> getSpecification(SearchCriteria criteria) {
         return (root, query, cb) ->
                 switch (criteria.getOperation()) {
                     case EQUALS ->

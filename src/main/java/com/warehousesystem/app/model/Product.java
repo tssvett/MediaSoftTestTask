@@ -2,24 +2,36 @@ package com.warehousesystem.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.warehousesystem.app.converter.DateConverter;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "warehouse_goods")
+@Table(name = "product")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-public class WarehouseGood {
+public class Product {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,6 +55,9 @@ public class WarehouseGood {
     @Column(name = "quantity")
     private BigDecimal quantity;
 
+    @Column(name = "is_available")
+    private boolean isAvailable = true;
+
     @Column(name = "last_update")
     @UpdateTimestamp
     @Convert(converter = DateConverter.class)
@@ -52,4 +67,7 @@ public class WarehouseGood {
     @CreationTimestamp
     @Convert(converter = DateConverter.class)
     private LocalDateTime creationTime;
+
+    @OneToMany(mappedBy = "product")
+    private List<PreparedProduct> preparedProducts;
 }

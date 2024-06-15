@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Getter
 @AllArgsConstructor
-public class Response {
+public class ErrorDetails {
     private String exceptionName;
 
     private String exceptionClass;

@@ -14,10 +14,12 @@ spring:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.xml
 
 app:
   scheduling:
-    enabled: true
+    enabled: false
     period: 120000
     priceIncreasePercentage: 10
     optimization: true

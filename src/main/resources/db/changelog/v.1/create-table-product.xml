@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="create-table-product" author="tssvett">
+
+        <createTable tableName="product">
+            <column name="id" type="uuid">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="article" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="category" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="price" type="numeric(10, 2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="quantity" type="numeric(10, 2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_update" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="creation_time" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="is_available_column_add" author="tssvett">
+        <addColumn tableName="product">
+            <column name="is_available" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
