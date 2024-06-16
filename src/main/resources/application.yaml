@@ -16,16 +16,26 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog-master.xml
 
-  app:
-    kafka:
-      enabled: false
-  aws:
-    path: ${path}
-    accessKeyId: ${accessKeyId}
-    secretAccessKey: ${secretAccessKey}
-    region: ${region}
-    bucket: ${bucket}
+account-service:
+  host: http://localhost:8070
+  methods:
+    get-account: /account
 
+crm-service:
+  host: http://localhost:8070
+  methods:
+    get-inn: /inn
+
+app:
   kafka:
-    bootstrapAddress: localhost:9092
-    groupId: group1
+    enabled: false
+aws:
+  path: ${path}
+  accessKeyId: ${accessKeyId}
+  secretAccessKey: ${secretAccessKey}
+  region: ${region}
+  bucket: ${bucket}
+
+kafka:
+  bootstrapAddress: localhost:9092
+  groupId: group1

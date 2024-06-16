@@ -1,7 +1,9 @@
 package com.warehousesystem.app.controller;
 
+import com.warehousesystem.app.businesslogic.service.ProductInOrdersService;
 import com.warehousesystem.app.dto.order.OrderCreateDto;
 import com.warehousesystem.app.dto.order.OrderGetResponseDto;
+import com.warehousesystem.app.dto.order.OrderInfo;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
 import com.warehousesystem.app.dto.product.ProductOrderDto;
 import com.warehousesystem.app.dto.status.StatusResponseDto;
@@ -12,6 +14,7 @@ import dev.tssvett.handler.exception.UnavailableProductException;
 import dev.tssvett.handler.exception.UpdateOrderException;
 import dev.tssvett.handler.exception.WrongCustomerIdException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +30,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @Validated
+@RequiredArgsConstructor
 @CrossOrigin
 public class OrderController {
 
-    @Autowired
-    public OrderService orderService;
+    private final OrderService orderService;
+    private final ProductInOrdersService productInOrdersService;
+
 
 
     @PostMapping("/order")
@@ -66,6 +73,12 @@ public class OrderController {
     public ResponseEntity<StatusResponseDto> updateOrderStatus(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody StatusResponseDto status, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
         StatusResponseDto statusResponseDto = orderService.setStatus(orderId, status, customerId);
         return new ResponseEntity<>(statusResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/product/orders")
+    public ResponseEntity<Map<UUID, List<OrderInfo>>> getOrders() throws ExecutionException, InterruptedException {
+        Map<UUID, List<OrderInfo>> orders = productInOrdersService.getOrderInfo();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 }
 
