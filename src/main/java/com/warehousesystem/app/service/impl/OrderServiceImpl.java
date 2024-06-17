@@ -1,5 +1,10 @@
 package com.warehousesystem.app.service.impl;
 
+import com.warehousesystem.app.businesslogic.integration.account.AccountServiceClient;
+import com.warehousesystem.app.businesslogic.integration.crm.CrmServiceClient;
+import com.warehousesystem.app.businesslogic.integration.orchestrator.OrchestratorServiceClient;
+import com.warehousesystem.app.dto.delivery.DeliveryDto;
+import com.warehousesystem.app.dto.orchestrator.OrchestratorRequestDto;
 import com.warehousesystem.app.dto.order.OrderCreateDto;
 import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
@@ -30,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
@@ -50,16 +56,25 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private MappingUtils mappingUtils;
 
+    @Autowired
+    private OrchestratorServiceClient orchestratorServiceClient;
+
+    @Autowired
+    private CrmServiceClient crmServiceClient;
+
+    @Autowired
+    private AccountServiceClient accountServiceClient;
+
     @Override
     public UUID create(OrderCreateDto orderCreateDto, Long customerId) throws CustomerIdNullException, NotEnoughProductsException, UnavailableProductException {
-
+        log.info("customerId {}", customerId);
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerIdNullException("CustomerId Not found!"));
         Order order = Order.builder()
-                .customerId(customer)
+                .customer(customer)
                 .deliveryAddress(orderCreateDto.getDeliveryAddress())
                 .status(Status.CREATED)
                 .build();
@@ -109,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -160,7 +175,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -180,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
 
         }
@@ -200,19 +215,63 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public StatusResponseDto setStatus(UUID orderId, StatusResponseDto status, Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
-
+        log.info("Order id: {}, Customer id: {}, Status: {}", orderId, customerId, status.getStatus());
         if (customerId == null) {
             throw new CustomerIdNullException("CustomerId is null!");
         }
 
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
 
-        if (order.getCustomerId().getId() != customerId) {
+        if (order.getCustomer().getId() != customerId) {
             throw new WrongCustomerIdException("Wrong CustomerId");
         }
         order.setStatus(status.getStatus());
         orderRepository.save(order);
         return StatusResponseDto.builder().status((status.getStatus())).build();
+    }
+
+    @Override
+    public DeliveryDto setDelivery(UUID orderId, DeliveryDto deliveryDto, Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
+        log.info("Order id: {}, Customer id: {}, Delivery: {}", orderId, customerId, deliveryDto.getDeliveryDate());
+        if (customerId == null) {
+            throw new CustomerIdNullException("CustomerId is null!");
+        }
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
+
+        if (order.getCustomer().getId() != customerId) {
+            throw new WrongCustomerIdException("Wrong CustomerId");
+        }
+        order.setDeliveryTime(deliveryDto.getDeliveryDate());
+        orderRepository.save(order);
+        return DeliveryDto.builder().deliveryDate((deliveryDto.getDeliveryDate())).build();
+    }
+
+    @Override
+    public UUID startOrderConfirmProcess(UUID orderId, Long customerId) throws ExecutionException, InterruptedException, CustomerIdNullException {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new CustomerIdNullException("Order Not found!"));
+        List<String> customerLoginList = List.of(order.getCustomer().getLogin());
+        String login = order.getCustomer().getLogin();
+        String account = accountServiceClient.getAccountsByLogins(customerLoginList).get().get(order.getCustomer().getLogin());
+        String inn = crmServiceClient.getInnsByLogins(customerLoginList).get().get(order.getCustomer().getLogin());
+        String deliveryAddress = order.getDeliveryAddress();
+        BigDecimal totalPrice = calculateTotalPrice(order.getPreparedProducts());
+        OrchestratorRequestDto orchestratorRequestDto = OrchestratorRequestDto.builder()
+                .login(login)
+                .account(account)
+                .inn(inn)
+                .deliveryAddress(deliveryAddress)
+                .totalPrice(totalPrice)
+                .customerId(order.getCustomer().getId())
+                .orderId(orderId.toString())
+                .build();
+        UUID businessKey = orchestratorServiceClient.startOrderConfirmProcess(orchestratorRequestDto);
+        log.info("Orchestrator started process with businessKey: " + businessKey);
+        order.setBusinessKey(businessKey);
+        order.setStatus(Status.PROCESSING);
+        orderRepository.save(order);
+
+        return businessKey;
     }
 
     private BigDecimal calculateTotalPrice(List<PreparedProduct> preparedProducts) {
@@ -223,6 +282,4 @@ public class OrderServiceImpl implements OrderService {
         }
         return totalPrice;
     }
-
-
 }

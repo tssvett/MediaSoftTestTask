@@ -216,6 +216,7 @@ class WarehouseGoodImplTest {
 }
     /*
 
+    /*
     @Test
     void readAll_CorrectGoodAdd_NonEmptyList() throws EmptyProductException {
         // given
@@ -233,6 +234,8 @@ class WarehouseGoodImplTest {
         assertFalse(result.isEmpty());
     }
 
+
+
     @Test
     void readAll_EmptyList_ThrowsEmptyGoodsException() {
         // given
@@ -244,6 +247,7 @@ class WarehouseGoodImplTest {
         // then
         assertThrows(EmptyProductException.class, () -> goodService.readAll(warehouseGoodSearchDto));
     }
+    */
 
     @Test
     void updateById_invalidId_ThrowsNotFoundByIdException() {
@@ -264,8 +268,8 @@ class WarehouseGoodImplTest {
                 .article("12345")
                 .description("Test Description")
                 .category("Test Category")
-                .price(10.0)
-                .quantity(5)
+                .price(BigDecimal.valueOf(10.0))
+                .quantity(BigDecimal.valueOf(5))
                 .build();
         ProductFullDto expectedDto = ProductFullDto.builder()
                 .id(id)
@@ -273,8 +277,8 @@ class WarehouseGoodImplTest {
                 .article("12345")
                 .description("Test Description")
                 .category("Test Category")
-                .price(10.0)
-                .quantity(5)
+                .price(BigDecimal.valueOf(10.0))
+                .quantity(BigDecimal.valueOf(5))
                 .build();
 
         when(goodRepository.existsById(id)).thenReturn(true);
@@ -297,8 +301,8 @@ class WarehouseGoodImplTest {
                 .article("12345")
                 .description("Test Description")
                 .category("Test Category")
-                .price(10.0)
-                .quantity(5)
+                .price(BigDecimal.valueOf(10.0))
+                .quantity(BigDecimal.valueOf(5))
                 .build();
 
         when(goodRepository.existsById(id)).thenReturn(true);

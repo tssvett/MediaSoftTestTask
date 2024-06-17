@@ -25,4 +25,18 @@
     </createTable>
 </changeSet>
 
+<changeSet id="add-column-business-key" author="tssvett">
+    <addColumn tableName="order">
+        <column name="business_key" type="uuid">
+        </column>
+    </addColumn>
+</changeSet>
+
+<changeSet id="add-column-delivery-time" author="tssvett">
+    <addColumn tableName="order">
+        <column name="delivery_time" type="varchar(255)">
+        </column>
+    </addColumn>
+</changeSet>
+
 </databaseChangeLog>
