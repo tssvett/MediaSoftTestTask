@@ -1,7 +1,7 @@
 package com.warehousesystem.app.businesslogic.service;
 
-import com.warehousesystem.app.businesslogic.account.AccountServiceClient;
-import com.warehousesystem.app.businesslogic.crm.CrmServiceClient;
+import com.warehousesystem.app.businesslogic.integration.account.AccountServiceClient;
+import com.warehousesystem.app.businesslogic.integration.crm.CrmServiceClient;
 import com.warehousesystem.app.dto.customer.CustomerInfo;
 import com.warehousesystem.app.dto.order.OrderInfo;
 import com.warehousesystem.app.model.Order;
@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.*;
 import static org.springframework.data.util.Pair.of;

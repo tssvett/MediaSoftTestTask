@@ -17,20 +17,25 @@ spring:
     change-log: classpath:db/changelog/changelog-master.xml
 
 account-service:
-  host: http://localhost:8070
+  host: http://localhost:8081
   methods:
     get-account: /account
 
 crm-service:
-  host: http://localhost:8070
+  host: http://localhost:8081
   methods:
     get-inn: /inn
+
+orchestrator-service:
+  host: http://localhost:8080
+  methods:
+    process-start: /process/start
 
 app:
   kafka:
     enabled: false
 aws:
-  path: ${path}
+  path: chromedriver
   accessKeyId: ${accessKeyId}
   secretAccessKey: ${secretAccessKey}
   region: ${region}

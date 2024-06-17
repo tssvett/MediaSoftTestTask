@@ -1,8 +1,8 @@
-package com.warehousesystem.app.businesslogic.crm.impl;
+package com.warehousesystem.app.businesslogic.integration.crm.impl;
 
 
-import com.warehousesystem.app.businesslogic.crm.CrmServiceClient;
-import com.warehousesystem.app.properties.CrmConfig;
+import com.warehousesystem.app.businesslogic.integration.crm.CrmServiceClient;
+import com.warehousesystem.app.properties.CrmProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,14 +21,14 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class CrmServiceClientImpl implements CrmServiceClient {
 
-    private final CrmConfig crmConfig;
-    private final WebClient webClient;
+    private final CrmProperties crmProperties;
+    private final WebClient crmWebClient;
 
     @Override
     public CompletableFuture<Map<String, String>> getInnsByLogins(List<String> logins) {
-        return webClient
+        return crmWebClient
                 .post()
-                .uri(crmConfig.getMethods().getGetInn())
+                .uri(crmProperties.getMethods().getGetInn())
                 .bodyValue(logins)
                 .retrieve()
                 .bodyToFlux(new ParameterizedTypeReference<Map<String, String>>() {

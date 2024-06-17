@@ -1,8 +1,7 @@
-package com.warehousesystem.app.businesslogic.account.impl;
+package com.warehousesystem.app.businesslogic.integration.account.impl;
 
-import com.warehousesystem.app.businesslogic.account.AccountServiceClient;
-import com.warehousesystem.app.properties.AccountConfig;
-import lombok.AllArgsConstructor;
+import com.warehousesystem.app.businesslogic.integration.account.AccountServiceClient;
+import com.warehousesystem.app.properties.AccountProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,14 +20,14 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class AccountServiceClientImpl implements AccountServiceClient {
 
-    private final AccountConfig accountConfig;
-    private final WebClient webClient;
+    private final AccountProperties accountProperties;
+    private final WebClient accountWebClient;
 
     @Override
     public CompletableFuture<Map<String, String>> getAccountsByLogins(List<String> logins) {
-        return webClient
+        return accountWebClient
                 .post()
-                .uri(accountConfig.getMethods().getGetAccount())
+                .uri(accountProperties.getMethods().getGetAccount())
                 .bodyValue(logins)
                 .retrieve()
                 .bodyToFlux(new ParameterizedTypeReference<Map<String, String>>() {

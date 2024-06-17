@@ -1,4 +1,4 @@
-package com.warehousesystem.app.businesslogic.crm;
+package com.warehousesystem.app.businesslogic.integration.crm;
 
 import java.util.List;
 import java.util.Map;

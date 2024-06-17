@@ -1,5 +1,6 @@
 package com.warehousesystem.app.service;
 
+import com.warehousesystem.app.dto.delivery.DeliveryDto;
 import com.warehousesystem.app.dto.order.OrderCreateDto;
 import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderUpdateDto;
@@ -13,6 +14,7 @@ import dev.tssvett.handler.exception.WrongCustomerIdException;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public interface OrderService {
 
@@ -26,4 +28,7 @@ public interface OrderService {
 
     StatusResponseDto setStatus(UUID orderId, StatusResponseDto status, Long customerId) throws CustomerIdNullException, WrongCustomerIdException;
 
+    DeliveryDto setDelivery(UUID orderId, DeliveryDto deliveryDto, Long customerId) throws CustomerIdNullException, WrongCustomerIdException;
+
+    UUID startOrderConfirmProcess(UUID orderId, Long customerId) throws ExecutionException, InterruptedException, CustomerIdNullException;
 }

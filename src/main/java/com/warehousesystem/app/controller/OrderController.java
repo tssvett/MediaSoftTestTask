@@ -1,6 +1,8 @@
 package com.warehousesystem.app.controller;
 
+import com.warehousesystem.app.businesslogic.integration.orchestrator.OrchestratorServiceClient;
 import com.warehousesystem.app.businesslogic.service.ProductInOrdersService;
+import com.warehousesystem.app.dto.delivery.DeliveryDto;
 import com.warehousesystem.app.dto.order.OrderCreateDto;
 import com.warehousesystem.app.dto.order.OrderGetResponseDto;
 import com.warehousesystem.app.dto.order.OrderInfo;
@@ -75,10 +77,21 @@ public class OrderController {
         return new ResponseEntity<>(statusResponseDto, HttpStatus.OK);
     }
 
+    @PatchMapping("/order/{orderId}/delivery")
+    public ResponseEntity<DeliveryDto> updateOrderDelivery(@Valid @PathVariable("orderId") UUID orderId, @Valid @RequestBody DeliveryDto delivery, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException {
+        DeliveryDto deliveryDto = orderService.setDelivery(orderId, delivery, customerId);
+        return new ResponseEntity<>(deliveryDto, HttpStatus.OK);
+    }
+
     @GetMapping("/product/orders")
     public ResponseEntity<Map<UUID, List<OrderInfo>>> getOrders() throws ExecutionException, InterruptedException {
         Map<UUID, List<OrderInfo>> orders = productInOrdersService.getOrderInfo();
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @PostMapping("/order/{orderId}/confirm")
+    public ResponseEntity<UUID> confirmOrder(@Valid @PathVariable("orderId") UUID orderId, @RequestHeader(value = "customerId", defaultValue = "") Long customerId) throws CustomerIdNullException, WrongCustomerIdException, ExecutionException, InterruptedException {
+        return new ResponseEntity<>(orderService.startOrderConfirmProcess(orderId, customerId), HttpStatus.OK);
     }
 }
 

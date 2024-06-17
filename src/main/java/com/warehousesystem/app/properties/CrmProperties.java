@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-@ConfigurationProperties(prefix = "account-service")
+@ConfigurationProperties(prefix = "crm-service")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountConfig {
+public class CrmProperties {
 
     private String host;
     private Methods methods;
@@ -24,6 +24,6 @@ public class AccountConfig {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Methods {
-        private String getAccount;
+        private String getInn;
     }
 }

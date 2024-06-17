@@ -1,4 +1,4 @@
-package com.warehousesystem.app.businesslogic.account;
+package com.warehousesystem.app.businesslogic.integration.account;
 
 import java.util.List;
 import java.util.Map;
